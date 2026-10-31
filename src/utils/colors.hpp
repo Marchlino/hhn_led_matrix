@@ -1,6 +1,15 @@
+#pragma once
 #include <cstdint>
 
-uint_fast32_t hsl(uint8_t h, uint8_t s, uint8_t l);
-uint_fast32_t rgb(uint8_t r, uint8_t g, uint8_t b);
-uint_fast32_t hslToRgb(uint_fast32_t rgb);
-uint_fast32_t rgbToHsl(uint_fast32_t hsl);
+
+typedef uint_fast32_t RGB;
+
+
+/**
+ * @fn rgb
+ * @brief Create a 32bit value from the given R, G and B values.
+ * @param uint8_t Blue channel
+ * @param uint8_t Green channel
+ * @param uint8_t Red channel
+ */
+RGB rgb( uint8_t r, uint8_t g, uint8_t b );

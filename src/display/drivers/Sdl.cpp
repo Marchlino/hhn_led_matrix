@@ -1,42 +1,47 @@
 
 #include "Sdl.hpp"
 
-Sdl::Sdl(int x, int y) {
 
-    this->size_x = x;
-    this->size_y = y;
+#define R_MASK 0xff
+#define G_MASK 0xff00
+#define B_MASK 0xff0000
 
-    SDL_Init(SDL_INIT_VIDEO);
-    SDL_CreateWindowAndRenderer(x, y, 0, &window, &renderer);
+
+Sdl::Sdl( int x, int y ) {
+
+    this->_size_x = x;
+    this->_size_y = y;
+
+    SDL_Init( SDL_INIT_VIDEO );
+    SDL_CreateWindowAndRenderer( x, y, 0, &this->_window, &this->_renderer );
 
 }
 
 Sdl::~Sdl() {
 
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
+    SDL_DestroyRenderer( this->_renderer );
+    SDL_DestroyWindow( this->_window );
     SDL_Quit();
 
 }
 
-bool Sdl::display(Image* img) {
+bool Sdl::display( Image* img ) {
 
-    if (SDL_PollEvent(&event) && event.type == SDL_QUIT)
+    if ( SDL_PollEvent( &this->_event ) && this->_event.type == SDL_QUIT )
         return false;
 
-    float steps_x = 1./this->size_x;
-    float steps_y = 1./this->size_y;
+    float steps_x = 1./this->_size_x;
+    float steps_y = 1./this->_size_y;
     int x = 0;
     int y = 0;
 
-    for (float l = 0.; l < 1.; l += steps_y) {
+    for ( float l = 0.; l < 1.; l += steps_y ) {
 
-        for (float k = 0.; k < 1.; k += steps_x) {
+        for ( float k = 0.; k < 1.; k += steps_x ) {
 
-            uint8_t p = img->getPixelInView(k, l);
-
-            SDL_SetRenderDrawColor(renderer, p >> 6, (p << 2) >> 6, (p << 4) >> 6, 255);
-            SDL_RenderDrawPoint(renderer, x, y);
+            RGB p = img->getPixelInView( k, l );
+            SDL_SetRenderDrawColor( this->_renderer,  p & R_MASK, ( p & G_MASK ) >> 8, p >> 16, 255 );
+            SDL_RenderDrawPoint( this->_renderer, x, y );
 
             x++;
 
@@ -47,8 +52,8 @@ bool Sdl::display(Image* img) {
 
     }
 
-    SDL_RenderPresent(renderer);
-
+    SDL_RenderPresent(this->_renderer);
 
     return true;
+
 }

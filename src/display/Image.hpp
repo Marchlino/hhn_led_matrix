@@ -1,105 +1,144 @@
 #pragma once
-#include <cstdint>
 #include <vector>
 #include <string>
 #include "ft2build.h"
 #include FT_FREETYPE_H
 
+#include "../utils/colors.hpp"
+
+
 /**
  * @class Image
- * @desc Represent an image in memory. It allow to easily draw shapes and text using screen space coordinates.
+ * @brief Represent an image in memory. It allow to easily draw shapes and text using screen space coordinates.
+ * @param int Horizontale size of the Image in pixels.
+ * @param int Vertical size of the Image in pixels.
  */
 class Image {
 
     private:
 
-        int size_x;
-        int size_y;
-        std::vector<uint8_t> pixels;
-        uint8_t drawing_color;
-        float view_unit_x;
-        float view_unit_y;
-        FT_Library library;
-        FT_Face face;
-        bool fontLoaded;
+        int _size_x;
+        int _size_y;
+        std::vector<RGB> _pixels;
+        RGB _drawing_color;
+        float _view_unit_x;
+        float _view_unit_y;
+        FT_Library _library;
+        FT_Face _face;
+        bool _fontLoaded;
 
     public:
 
-        Image(int size_x, int size_y);
+        Image( int size_x, int size_y );
 
-        bool loadFont(std::string path);
+        /**
+         * @fn loadFont
+         * @brief Load a font from a font file for FreeType to use.
+         * @param std::string Path to the font to load.
+         */
+        bool loadFont( std::string path );
 
         /**
          * @fn getPixelAt
-         * @desc Return pixel at x, y
+         * @brief Return pixel at x, y.
+         * @param int X position.
+         * @param int Y position.
          */
-        uint8_t getPixelAt(int x, int y);
+        RGB getPixelAt( int x, int y );
 
         /**
          * @fn getPixelInView
-         * @desc Return pixel at vw, vh
+         * @brief Return pixel at vw, vh.
+         * @param float View weight.
+         * @param float View height.
          */
-        uint8_t getPixelInView(float vw, float vh);
+        RGB getPixelInView( float vw, float vh );
 
         /**
          * @fn setPixelAt
-         * @desc Color pixel at x, y
+         * @brief Color pixel at x, y.
+         * @param int X position.
+         * @param int Y position.
          */
-        bool setPixelAt(int x, int y);
+        bool setPixelAt( int x, int y );
 
         /**
          * @fn setDrawingColor
-         * @desc Change the drawing color
+         * @brief Change the drawing color.
+         * @param uint32_t Color in RGB format.
          */
-        bool setDrawingColor(uint8_t color);
+        bool setDrawingColor( RGB color );
 
         /**
          * @fn clear
-         * @desc Clear the Image to color 0
+         * @brief Clear the Image to color 0.
          */
         bool clear();
 
         /**
          * @fn weigthUnit
-         * @desc Return the value if 1 pixel in screen space for the x axis
+         * @brief Return the value if 1 pixel in screen space for the x axis.
          */
         float weigthUnit();
 
 
         /**
          * @fn heigthUnit
-         * @desc Return the value if 1 pixel in screen space for the y axis
+         * @brief Return the value if 1 pixel in screen space for the y axis.
          */
         float heigthUnit();
 
         /**
          * @fn drawGlyph
-         * @desc Display a glyph at defined coordinates
+         * @brief Display a glyph at defined coordinates.
+         * @param std::string The glyph to display.
+         * @param int X position.
+         * @param int Y position.
+         * @param int Horizontal size.
+         * @param int Vertical size.
          */
-        bool drawGlyph(std::string glyph, int x, int y, int size_x, int size_y);
+        bool drawGlyph( std::string glyph, int x, int y, int size_x, int size_y );
 
         /**
          * @fn drawText
-         * @desc Display text at defined coordinates
+         * @brief Display text at defined coordinates
+         * @param std::string The text to display.
+         * @param float View weight.
+         * @param float View height.
+         * @param float Horizontal size.
+         * @param float Vertical size.
          */
-        bool drawText(std::string text, float vw, float vh, float weight, float height);
+        bool drawText( std::string text, float vw, float vh, float weight, float height );
 
         /**
          * @fn drawRect
-         * @desc Display a rectangle at defined coordinates
+         * @brief Display a rectangle at defined coordinates.
+         * @param float View weight.
+         * @param float View height.
+         * @param float Horizontal size.
+         * @param float Vertical size.
          */
-        bool drawRect(float vw, float vh, float weight, float height);
+        bool drawRect( float vw, float vh, float weight, float height );
 
         /**
          * @fn drawCircle
-         * @desc Display a circle at defined coordinates
+         * @brief Display a circle at defined coordinates.
+         * @param float View weight.
+         * @param float View height.
+         * @param float Radiis of the circle.
          */
-        bool drawCircle(float vw, float vh, float radius);
+        bool drawCircle( float vw, float vh, float radius );
 
         /**
          * @fn drawTriangle
-         * @desc Display a triangle at defined coordinates
+         * @brief Display a triangle at defined coordinates.
+         * @param float View weight of the 1 point.
+         * @param float View height of the 1 point.
+         * @param float View weight of the 2 point.
+         * @param float View height of the 2 point.
+         * @param float View weight of the 3 point.
+         * @param float View height of the 3 point.
          */
-        bool drawTriangle(float vw1, float vh1, float vw2, float vh2, float vw3, float vh3);
+        bool drawTriangle( float vw1, float vh1, float vw2, float vh2, float vw3, float vh3 );
 
 };
