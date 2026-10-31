@@ -41,7 +41,7 @@ int main( int argc, char** argv ) {
 
     logger( 0, "- Loaded Image (screen)" );
 
-    Display* display = new Sdl( 512, 512 );
+    Display* display = new Sdl( 512, 256 );
 
     logger( 0, "- Loaded Display" );
 

@@ -220,7 +220,7 @@ bool Image::drawRect( float vw, float vh, float weight, float height ) {
 
         for( int k = 0; k < pixel_size_x; k++ ) {
 
-            setPixelAt( pixel_x + l, pixel_y + k );
+            setPixelAt( pixel_x + k, pixel_y + l );
 
         }
 

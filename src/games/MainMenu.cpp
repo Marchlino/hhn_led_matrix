@@ -1,5 +1,6 @@
 #include "MainMenu.hpp"
 #include "logger.h"
+#include <cstdint>
 
 
 MainMenu::MainMenu( std::vector<Game*> games ) {
@@ -193,10 +194,30 @@ bool MainMenu::render( Image* i ) {
 
     if ( this->_current_game >= 0 )
         this->_games[this->_current_game]->render( i );
+
     else {
+
+        i->setDrawingColor( rgb( 227, 181, 219 ) );
+        i->drawRect( 0., 0., 1., 1. );
+        i->setDrawingColor( rgb( 36, 31, 35 ) );
+        i->drawText( "F", 0.05, -0.1, 0.9, 0.9 );
+
+        std::string text = "^Animii^";
+        uint8_t ind = 0;
+
+        const int CYCLE_DURATION = 360;
+        const int PHASE_DURATION = 120;
+        int phase = (this->_iterations % CYCLE_DURATION) / PHASE_DURATION;
+        float phase_progress = (float)((this->_iterations % CYCLE_DURATION) % PHASE_DURATION) / PHASE_DURATION;
+
+        float letter_width = 0.08;
+        int num_letters = text.length();
+        float total_width = num_letters * letter_width;
+        float start_x_base = (1.0 - total_width) / 2.0;
+
         for ( Vec3* v: this->_cube ) {
 
-             // Vertex relative to cube's local origin (0,0,0)
+            // Vertex relative to cube's local origin (0,0,0)
             Vec3* local_vertex = v;
 
             // Apply rotations in local space
@@ -213,17 +234,41 @@ bool MainMenu::render( Image* i ) {
 
             Vec2 p = translate2D( &world_vertex, this->_camera );
 
-            i->setDrawingColor( rgb( 40, 70, 61 ) );
-            i->drawText( "LED Matrix", p.x + 0.4, p.y + 0.4, 0.5, 0.1 );
             i->setDrawingColor( rgb( 173, 90, 178 ) );
-            i->drawCircle( p.x + 0.5, p.y + 0.5, 0.01 );
+            i->drawCircle( p.x + 0.7, p.y + 0.2, 0.02 );
 
+            float start_x = start_x_base + ind * letter_width;
+            float start_y = 0.8;
+
+            float target_x = p.x + 0.7;
+            float target_y = p.y + 0.6;
+
+            float text_x = target_x;
+            float text_y = target_y;
+
+            if ( phase == 0 ) {
+                text_x = start_x + (target_x - start_x) * phase_progress;
+                text_y = start_y + (target_y - start_y) * phase_progress;
+            }
+            else if ( phase == 1 ) {
+                text_x = target_x;
+                text_y = target_y;
+            }
+            else if ( phase == 2 ) {
+                text_x = target_x + (start_x - target_x) * phase_progress;
+                text_y = target_y + (start_y - target_y) * phase_progress;
+            }
+
+            i->setDrawingColor( rgb( 66, 12, 53 ) );
+            i->drawText( std::string(1, text.at(ind)), text_x, text_y, 0.1, 0.1 );
+            ind++;
         }
     }
 
     return true;
 
 }
+
 
 
 bool MainMenu::reset() {

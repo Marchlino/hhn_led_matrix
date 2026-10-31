@@ -57,8 +57,14 @@ void initCamera( Image* i, Camera* c, float fov ) {
     float aspect_ratio = i->weigthUnit() / i->heigthUnit();
 
     float fov_rad = fov * ( M_PI / 180.0f );
-    c->fov_angle_y = 1.0f / std::tan( fov_rad );
-    c->fov_angle_x = c->fov_angle_y / aspect_ratio;
+    if ( i->weigthUnit() > i->heigthUnit() ) {
+        c->fov_angle_y = 1.0f / std::tan( fov_rad );
+        c->fov_angle_x = c->fov_angle_y / aspect_ratio;
+    } else {
+        c->fov_angle_x = 1.0f / std::tan( fov_rad );
+        c->fov_angle_y = c->fov_angle_x / aspect_ratio;
+    }
+
 
 }
 
