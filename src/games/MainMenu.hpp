@@ -2,6 +2,8 @@
 #include <vector>
 
 #include "Game.hpp"
+#include "../utils/geometry.hpp"
+
 
 /**
  * @class MainMenu
@@ -17,6 +19,9 @@ class MainMenu: public Game {
         std::vector<int> voted_for;
         int current_game;
         float iterations;
+        std::vector<Vec3*> cube;
+        Camera* c;
+
 
         int getPlayerIndex(Player* );
         int mostVotedGame();

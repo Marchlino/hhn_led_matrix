@@ -7,6 +7,8 @@ private:
 
     std::vector<Player*> players;
     std::vector<int> scores;
+    float player_angle;
+    float min_angle;
 
     int getPlayerIndex(Player* );
 

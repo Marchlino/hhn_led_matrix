@@ -1,11 +1,18 @@
-#include <cmath>
-
 #include "MainMenu.hpp"
+#include "logger.h"
+#include <cstdint>
+
 
 MainMenu::MainMenu(std::vector<Game*> games) {
 
     current_game = -1;
     this->games = games;
+
+    cube = {new Vec3(0.5, 0.5, 0.5), new Vec3(0.5, 0.5, -0.5), new Vec3(0.5, -0.5, 0.5), new Vec3(0.5, -0.5, -0.5),
+            new Vec3(-0.5, 0.5, 0.5), new Vec3(-0.5, 0.5, -0.5), new Vec3(-0.5, -0.5, 0.5), new Vec3(-0.5, -0.5, -0.5)
+    };
+
+    this->c = new Camera();
 
 }
 bool MainMenu::addPlayer(Player* p) {
@@ -75,18 +82,20 @@ bool MainMenu::updatePlayer(Player* p, std::vector<int> v) {
     // We need at least 2 parameters
     if ( v.size() >= 2 ) {
 
-        // Vote action
-        if ( v[0] == 0 ) {
+        switch (v[0]) {
 
-            // If Action Value is in correct range...
-            if ( v[1] < this->games.size() ) {
+            // Vote
+            case 0:
+                if ( v[1] < this->games.size() ) {
+                    // Mark the vote for game n in the voted for array
+                    this->voted_for.at(player_index) = v[1];
+                    return true;
+                }
 
-                // Mark the vote for game n in the voted for array
-                this->voted_for.at(player_index) = v[1];
-                return true;
-
-            }
-
+            // Pass to current game
+            case 1:
+                if (current_game >= 0)
+                    return this->games[current_game]->updatePlayer(p, v);
         }
 
     }
@@ -163,20 +172,40 @@ bool MainMenu::isRunning() {
 
 bool MainMenu::render(Image* i) {
 
+    if (iterations == 0) {
+        initCamera(i, this->c, 30);
+    }
+
     i->clear();
     iterations += 1;
 
     if ( current_game >= 0 )
         this->games.at(current_game)->render(i);
     else {
-        i->setDrawingColor(142);
-        i->drawRect(0.1, 0.05, std::abs(std::cos(iterations * i->weigthUnit() * 2)), std::abs(std::cos(iterations * i->heigthUnit())));
-        i->setDrawingColor(255);
-        i->drawCircle(0.2, std::abs(std::cos(iterations * i->weigthUnit() * 10)), std::abs(std::cos(iterations * i->weigthUnit() * 2))/2);
-        i->setDrawingColor(63);
-        i->drawTriangle(0.2, std::abs(std::cos(iterations * i->weigthUnit() * 10)), std::abs(std::cos(iterations * i->weigthUnit() * 2))/2, 0.7, 0.3, 0.2);
-        i->setDrawingColor(255);
-        i->drawText("Hello world", 0., std::abs(std::cos(iterations * i->weigthUnit() * 2)), 1., .1);
+        for ( Vec3* v: this->cube ) {
+
+            Vec3* local_vertex = v;  // Vertex relative to cube's local origin (0,0,0)
+
+            // Apply rotations in local space
+            rotationX(v, 2.);
+            rotationY(v, 5.);
+            rotationZ(v, 1.);
+
+            // Transform to world space
+            Vec3 world_vertex = Vec3(
+                local_vertex->x + 0,
+                local_vertex->y + 0,
+                local_vertex->z + 10
+            );
+
+            Vec2 p = translate2D(&world_vertex, this->c);
+
+            i->setDrawingColor(255);
+            i->drawCircle(p.x + 0.5, p.y + 0.5, 0.01);
+            i->setDrawingColor((uint8_t)this->iterations);
+            i->drawText("LED Matrix", p.x + 0.4, p.y + 0.4, 0.5, 0.1);
+
+        }
     }
 
     return true;
