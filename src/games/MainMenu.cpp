@@ -1,6 +1,5 @@
 #include "MainMenu.hpp"
 #include "logger.h"
-#include <cstdint>
 
 
 MainMenu::MainMenu(std::vector<Game*> games) {
@@ -200,10 +199,10 @@ bool MainMenu::render(Image* i) {
 
             Vec2 p = translate2D(&world_vertex, this->c);
 
-            i->setDrawingColor(255);
-            i->drawCircle(p.x + 0.5, p.y + 0.5, 0.01);
-            i->setDrawingColor((uint8_t)this->iterations);
+            i->setDrawingColor(rgb(40, 70, 61));
             i->drawText("LED Matrix", p.x + 0.4, p.y + 0.4, 0.5, 0.1);
+            i->setDrawingColor(rgb(173, 90, 178));
+            i->drawCircle(p.x + 0.5, p.y + 0.5, 0.01);
 
         }
     }

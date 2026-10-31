@@ -27,6 +27,7 @@ target_sources( LED_Matrix
         src/display/drivers/Stdout.cpp
         src/display/drivers/Sdl.cpp
         src/utils/geometry.cpp
+        src/utils/colors.cpp
         include/logger/logger.cpp
 )
 

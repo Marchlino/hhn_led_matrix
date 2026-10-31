@@ -10,7 +10,7 @@ Image::Image(int size_x, int size_y) {
 
     this->size_x = size_x;
     this->size_y = size_y;
-    this->pixels = std::vector<uint8_t>(size_x * size_y);
+    this->pixels = std::vector<RGB>(size_x * size_y);
 
     this->view_unit_x = 1./this->size_x;
     this->view_unit_y = 1./this->size_y;
@@ -64,7 +64,7 @@ bool Image::setPixelAt(int x, int y) {
 
 }
 
-uint8_t Image::getPixelAt(int x, int y) {
+RGB Image::getPixelAt(int x, int y) {
 
     if ( x < 0 || x >= this->size_x) return 0;
     if ( y < 0 || y >= this->size_y) return 0;
@@ -74,7 +74,7 @@ uint8_t Image::getPixelAt(int x, int y) {
 }
 
 
-uint8_t Image::getPixelInView(float vw, float vh) {
+RGB Image::getPixelInView(float vw, float vh) {
 
     int x = (int)(vw / this->view_unit_x);
     int y = (int)(vh / this->view_unit_y);
@@ -96,7 +96,7 @@ float Image::heigthUnit() {
 
 }
 
-bool Image::setDrawingColor(uint8_t color) {
+bool Image::setDrawingColor(RGB color) {
 
     this->drawing_color = color;
     return true;

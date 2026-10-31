@@ -1,5 +1,10 @@
 
 #include "Sdl.hpp"
+#include <cstdio>
+
+#define R_MASK 0xff
+#define G_MASK 0xff00
+#define B_MASK 0xff0000
 
 Sdl::Sdl(int x, int y) {
 
@@ -33,9 +38,8 @@ bool Sdl::display(Image* img) {
 
         for (float k = 0.; k < 1.; k += steps_x) {
 
-            uint8_t p = img->getPixelInView(k, l);
-
-            SDL_SetRenderDrawColor(renderer, p >> 6, (p << 2) >> 6, (p << 4) >> 6, 255);
+            RGB p = img->getPixelInView(k, l);
+            SDL_SetRenderDrawColor(renderer,  p & R_MASK, (p & G_MASK) >> 8, p >> 16, 255);
             SDL_RenderDrawPoint(renderer, x, y);
 
             x++;

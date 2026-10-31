@@ -1,5 +1,4 @@
 #include <cmath>
-#include <cstdio>
 
 #include "geometry.hpp"
 

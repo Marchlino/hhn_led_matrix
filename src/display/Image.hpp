@@ -5,6 +5,8 @@
 #include "ft2build.h"
 #include FT_FREETYPE_H
 
+#include "../utils/colors.hpp"
+
 /**
  * @class Image
  * @desc Represent an image in memory. It allow to easily draw shapes and text using screen space coordinates.
@@ -15,8 +17,8 @@ class Image {
 
         int size_x;
         int size_y;
-        std::vector<uint8_t> pixels;
-        uint8_t drawing_color;
+        std::vector<RGB> pixels;
+        RGB drawing_color;
         float view_unit_x;
         float view_unit_y;
         FT_Library library;
@@ -33,13 +35,13 @@ class Image {
          * @fn getPixelAt
          * @desc Return pixel at x, y
          */
-        uint8_t getPixelAt(int x, int y);
+        RGB getPixelAt(int x, int y);
 
         /**
          * @fn getPixelInView
          * @desc Return pixel at vw, vh
          */
-        uint8_t getPixelInView(float vw, float vh);
+        RGB getPixelInView(float vw, float vh);
 
         /**
          * @fn setPixelAt
@@ -51,7 +53,7 @@ class Image {
          * @fn setDrawingColor
          * @desc Change the drawing color
          */
-        bool setDrawingColor(uint8_t color);
+        bool setDrawingColor(RGB color);
 
         /**
          * @fn clear

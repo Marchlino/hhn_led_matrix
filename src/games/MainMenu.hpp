@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 #include <vector>
 
 #include "Game.hpp"
@@ -18,7 +19,7 @@ class MainMenu: public Game {
         std::vector<Game*> games;
         std::vector<int> voted_for;
         int current_game;
-        float iterations;
+        uint_fast32_t iterations = 0;
         std::vector<Vec3*> cube;
         Camera* c;
 
