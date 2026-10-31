@@ -1,21 +1,27 @@
 #pragma once
 #include <string>
 
+
+/**
+ * @class Player
+ * @brief Represent a connected player.
+ * @param std::string The name of the player
+ * @param std::string The (unique) id of the player.
+ */
 class Player {
 
     private:
 
-        std::string name;
-        std::string id;
+        std::string _name;
+        std::string _id;
 
     public:
 
-        // Name is set once, ID could be IP, etc
         Player(std::string name, std::string id);
 
         /**
          * @fn gtID
-         * @desc Return the player ID, could also preprocess it too like merge other info and things.
+         * @brief Return the player ID.
          */
         std::string getID();
 
