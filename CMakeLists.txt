@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.23)
 
-project(LED_Matrix C CXX)
+project(LED_Matrix CXX)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
