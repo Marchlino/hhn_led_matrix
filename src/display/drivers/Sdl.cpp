@@ -4,74 +4,70 @@
 #include <string>
 
 
-#define R_MASK 0xff
-#define G_MASK 0xff00
-#define B_MASK 0xff0000
-
-
 Sdl::Sdl( Config* conf ) {
 
     this->_size_x = std::stoi( conf->get("sdl_x_size") );
     this->_size_y = std::stoi( conf->get("sdl_y_size") );
+    this->_sdl_ok = false;
 
-    this->_sdl_ok = true;
-
-    if ( SDL_Init( SDL_INIT_VIDEO ) != 0) {
-
+    if ( SDL_Init( SDL_INIT_VIDEO ) != 0 ) {
         logger(3, ("SDL could not start: " + std::string(SDL_GetError())).c_str() );
-        this->_sdl_ok = false;
-
+        return;
     }
 
     if ( SDL_CreateWindowAndRenderer( this->_size_x, this->_size_y, 0, &this->_window, &this->_renderer ) ) {
-
-        logger(3, ("SDL create rendere & window: " + std::string(SDL_GetError())).c_str() );
-        this->_sdl_ok = false;
-
+        logger(3, ("SDL create renderer & window: " + std::string(SDL_GetError())).c_str() );
+        return;
     }
 
+    this->_texture = SDL_CreateTexture( this->_renderer, SDL_PIXELFORMAT_XBGR8888,
+                                        SDL_TEXTUREACCESS_STREAMING,
+                                        this->_size_x, this->_size_y );
+    if ( !this->_texture ) {
+        logger(3, ("SDL create texture: " + std::string(SDL_GetError())).c_str() );
+        return;
+    }
+
+    this->_sdl_ok = true;
 }
 
 Sdl::~Sdl() {
 
-    SDL_DestroyRenderer( this->_renderer );
-    SDL_DestroyWindow( this->_window );
+    if ( this->_texture )  SDL_DestroyTexture( this->_texture );
+    if ( this->_renderer ) SDL_DestroyRenderer( this->_renderer );
+    if ( this->_window )   SDL_DestroyWindow( this->_window );
     SDL_Quit();
 
 }
 
 bool Sdl::display( Image* img ) {
 
-    if (!this->_sdl_ok) return false;
+    if ( !this->_sdl_ok ) return false;
 
-    if ( SDL_PollEvent( &this->_event ) && this->_event.type == SDL_QUIT )
+    while ( SDL_PollEvent( &this->_event ) )
+        if ( this->_event.type == SDL_QUIT )
+            return false;
+
+    void* raw;
+    int pitch;
+    if ( SDL_LockTexture( this->_texture, nullptr, &raw, &pitch ) != 0 )
         return false;
 
+    const float inv_x = 1.f / this->_size_x;
+    const float inv_y = 1.f / this->_size_y;
 
-    float steps_x = 1./this->_size_x;
-    float steps_y = 1./this->_size_y;
+    for ( int y = 0; y < this->_size_y; y++ ) {
 
-    int x = 0;
-    int y = 0;
+        Uint32* row = reinterpret_cast<Uint32*>( static_cast<Uint8*>(raw) + y * pitch );
+        const float l = ( y + 0.5f ) * inv_y;
 
-    for ( float l = 0.; l < 1.; l += steps_y ) {
-
-        for ( float k = 0.; k < 1.; k += steps_x ) {
-
-            RGB p = img->getPixelInView( k, l );
-            SDL_SetRenderDrawColor( this->_renderer,  p & R_MASK, ( p & G_MASK ) >> 8, p >> 16, 255 );
-            SDL_RenderDrawPoint( this->_renderer, x, y );
-
-            x++;
-
-        }
-
-        x = 0;
-        y++;
-
+        for ( int x = 0; x < this->_size_x; x++ )
+            row[x] = img->getPixelInView( ( x + 0.5f ) * inv_x, l );
     }
 
-    SDL_RenderPresent(this->_renderer);
+    SDL_UnlockTexture( this->_texture );
+    SDL_RenderCopy( this->_renderer, this->_texture, nullptr, nullptr );
+    SDL_RenderPresent( this->_renderer );
 
     return true;
 

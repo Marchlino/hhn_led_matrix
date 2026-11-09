@@ -21,6 +21,7 @@ class Sdl: public Display {
         SDL_Renderer* _renderer;
         SDL_Window* _window;
         bool _sdl_ok;
+        SDL_Texture* _texture = nullptr;
 
     public:
 

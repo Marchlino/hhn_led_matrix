@@ -1,3 +1,4 @@
+#include <chrono>
 #include "logger.h"
 
 #include "games/Game.hpp"
@@ -67,32 +68,36 @@ int main( int argc, char** argv ) {
 
     logger( 0, "-- LED Matrix loaded --" );
 
+    using Clock = std::chrono::steady_clock;
+    constexpr auto frame_time = std::chrono::nanoseconds(1'000'000'000 / 20);
+
+    auto next_frame = Clock::now();
+
     while ( true ) {
 
         menu->update();
         menu->render( screen );
         server->sync();
 
-        // For instance we closed the Window
-        if ( !display->display( screen ) || end_program ) {
+        if ( !display->display( screen ) || end_program )
+            break;
 
-            // Server first, it stops Crow and removes players from the menu.
-            delete server;
-            delete display;
-            delete menu;
-            for ( Game* g: games )
-                delete g;
-            delete screen;
-            delete conf;
-            return 0;
+        next_frame += frame_time;
 
-        }
+        auto now = Clock::now();
+        if ( next_frame < now )
+            next_frame = now;
 
-        //Just to avoid to use all of the CPU because we try to render at 65465 frames/seconds
-        sleep_for( 1ms );
-
+        std::this_thread::sleep_until( next_frame );
     }
 
+    delete server;
+    delete display;
+    delete menu;
+    for ( Game* g : games )
+        delete g;
+    delete screen;
+    delete conf;
     return 0;
 
 }

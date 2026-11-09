@@ -164,7 +164,7 @@ bool Network::run() {
 
     static reLogger crow_logger;
     crow::logger::setHandler( &crow_logger );
-    this->_crow_thread = this->_app.port( this->_port ).run_async();
+    this->_crow_thread = this->_app.port( this->_port ).multithreaded().run_async();
     this->_app.signal_clear();
     return true;
 
