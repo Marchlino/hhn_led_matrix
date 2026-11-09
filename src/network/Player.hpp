@@ -1,5 +1,7 @@
 #pragma once
+#include <mutex>
 #include <string>
+#include <vector>
 #include "crow/websocket.h"
 
 #include "../games/Game.hpp"
@@ -19,6 +21,7 @@ class Player {
         std::string _id;
         Game* _game;
         crow::websocket::connection* _connection;
+        std::mutex _name_mutex;
 
     public:
 
@@ -29,6 +32,12 @@ class Player {
          * @brief Return the player ID.
          */
         std::string getID();
+
+        /**
+         * @fn getConnection
+         * @brief Return the websocket connection of the player.
+         */
+        crow::websocket::connection* getConnection();
 
         /**
          * @fn setName

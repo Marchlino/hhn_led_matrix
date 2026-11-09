@@ -2,6 +2,7 @@
 
 #include "games/Game.hpp"
 #include "games/MainMenu.hpp"
+#include "games/Pong.hpp"
 #include "display/Image.hpp"
 #include "display/Display.hpp"
 #include "display/drivers/Sdl.hpp"
@@ -36,7 +37,7 @@ int main( int argc, char** argv ) {
 
     logger( 0, "-- LED Matrix Start --" );
 
-    std::vector<Game*> games;
+    std::vector<Game*> games = { new Pong() };
 
     logger( 0, "- Loaded games" );
 
@@ -70,12 +71,19 @@ int main( int argc, char** argv ) {
 
         menu->update();
         menu->render( screen );
+        server->sync();
 
         // For instance we closed the Window
         if ( !display->display( screen ) || end_program ) {
 
-            delete display;
+            // Server first, it stops Crow and removes players from the menu.
             delete server;
+            delete display;
+            delete menu;
+            for ( Game* g: games )
+                delete g;
+            delete screen;
+            delete conf;
             return 0;
 
         }

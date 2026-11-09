@@ -3,74 +3,43 @@
 
     <head>
 
-        <script src="http://{{servername}}:{{port}}/static/jquery-3.1.0.min.js"></script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+        <link rel="stylesheet" href="static/style.css">
+
+        <title>LED Matrix</title>
 
     </head>
-
     <body>
 
-        <div id="app">
+        <div id="bar">
 
-            <div id="error"></div>
-
+            <button id="back" class="hidden">&larr; Menu</button>
+            <span id="status"></span>
+            <button id="name">&hellip;</button>
 
         </div>
 
-        <script>
+        <main>
 
-            var sock = new WebSocket("ws://{{servername}}:{{port}}/ws");
-            var name = "";
+            <ul id="games"></ul>
 
-            function setName(new_name) {
+            <div id="controller" class="hidden">
 
-                let valid_char = "azertyuiopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN0123456789+-._!&?",
-                name = new_name;
-                sock.send("0," + new_name);
+                <div id="bg">
 
-            }
+                </div>
 
-            function processNameForm() {
+                <div id="pad-area">
 
-                let n = $("#playerName").val();
-                setName(n);
+                </div>
 
-            }
+            </div>
 
-            function nameForm() {
+        </main>
 
-                return `<div id=\"nameForm\">
-                            <input id=\"playerName\" type=\"text\" value=\"${name}\" \\>
-                            <button onclick=\"processNameForm()\">Send!</button>
-                        </div>`;
-
-            }
-
-            sock.onopen = ()=>{
-                console.log('open')
-            }
-            sock.onerror = (e)=>{
-                console.log('error',e)
-            }
-            sock.onclose = (e)=>{
-                console.log('close', e)
-            }
-            sock.onmessage = (e)=>{
-
-                if ( e[0] == "0" ) {
-
-                    name = e;
-
-                }
-
-            }
-
-            $(document).ready(function(){
-
-                $("#app").append(nameForm());
-
-            });
-
-        </script>
+        <script src="static/game.js"></script>
 
     </body>
 

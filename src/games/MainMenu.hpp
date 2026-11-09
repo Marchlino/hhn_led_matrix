@@ -1,5 +1,8 @@
 #pragma once
+#include <atomic>
 #include <cstdint>
+#include <mutex>
+#include <string>
 #include <vector>
 
 #include "Game.hpp"
@@ -21,8 +24,13 @@ class MainMenu: public Game {
         std::vector<int> _voted_for;
         int _current_game;
         uint_fast32_t _iterations = 0;
-        std::vector<Vec3*> _cube;
-        Camera* _camera;
+        // std::vector<Vec3*> _cube;
+        // Camera* _camera;
+        std::mutex _mutex;
+
+        // Bumped whenever something the web clients display changes
+        // (players, votes, current game), so Network knows when to resend.
+        std::atomic<uint32_t> _state_version{ 0 };
 
         /**
          * @fn _getPlayerIndex
@@ -40,6 +48,7 @@ class MainMenu: public Game {
     public:
 
         MainMenu( std::vector<Game*> games );
+        ~MainMenu();
         bool addPlayer( Player* ) override;
         bool removePlayer( Player* ) override;
         bool updatePlayer( Player* , std::vector<Value> ) override;
@@ -47,5 +56,37 @@ class MainMenu: public Game {
         bool render( Image* i) override;
         bool update() override;
         bool reset() override;
+        int getControllerType() override;
+        std::string getName() override;
+
+        /**
+         * @fn getStateVersion
+         * @brief Return a counter incremented every time the menu state changes.
+         */
+        uint32_t getStateVersion();
+
+        /**
+         * @fn getGameNames
+         * @brief Return the names of all registered games, in vote order.
+         */
+        std::vector<std::string> getGameNames();
+
+        /**
+         * @fn getVoteCounts
+         * @brief Return the number of votes for each registered game.
+         */
+        std::vector<int> getVoteCounts();
+
+        /**
+         * @fn getCurrentGame
+         * @brief Return the index of the running game, -1 for the main menu.
+         */
+        int getCurrentGame();
+
+        /**
+         * @fn getCurrentControllerType
+         * @brief Return the controller type of the running game (the menu's when none runs).
+         */
+        int getCurrentControllerType();
 
 };

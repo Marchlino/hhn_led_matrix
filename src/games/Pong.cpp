@@ -21,19 +21,23 @@ int Pong::getPlayerIndex(Player* p) {
 
 bool Pong::addPlayer(Player* p) {
 
+    if (getPlayerIndex(p) != -1) return false;
     this->players.push_back(p);
     float new_angle = 360. / this->players.size();
     return true;
 
 }
 
-bool Pong::removePlayer(Player* ) {
+bool Pong::removePlayer(Player* p) {
 
+    int index = getPlayerIndex(p);
+    if (index == -1) return false;
+    this->players.erase(this->players.begin() + index);
     return true;
 
 }
 
-bool Pong::updatePlayer(Player* , std::vector<int> ) {
+bool Pong::updatePlayer(Player* , std::vector<Value> ) {
 
     return true;
 
@@ -59,6 +63,22 @@ bool Pong::update() {
 
 bool Pong::reset() {
 
+    this->players.clear();
+    this->scores.clear();
     return true;
+
+}
+
+
+int Pong::getControllerType() {
+
+    return 1;
+
+}
+
+
+std::string Pong::getName() {
+
+    return "Pong";
 
 }
