@@ -17,7 +17,7 @@ Sdl::Sdl( Config* conf ) {
         return;
     }
 
-    if ( SDL_CreateWindowAndRenderer( this->_size_x, this->_size_y, 0, &this->_window, &this->_renderer ) ) {
+    if ( SDL_CreateWindowAndRenderer( this->_size_x, this->_size_y, SDL_WINDOW_RESIZABLE, &this->_window, &this->_renderer ) ) {
         logger(3, ("SDL create renderer & window: " + std::string(SDL_GetError())).c_str() );
         return;
     }
