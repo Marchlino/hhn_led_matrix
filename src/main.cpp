@@ -12,10 +12,6 @@
 #include "network/Network.hpp"
 
 
-using namespace std::this_thread;
-using namespace std::chrono_literals;
-
-
 bool end_program = false;
 void endProgram(int sig) {
     end_program = true;

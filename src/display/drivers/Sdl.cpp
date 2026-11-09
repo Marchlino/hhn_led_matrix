@@ -8,6 +8,8 @@ Sdl::Sdl( Config* conf ) {
 
     this->_size_x = std::stoi( conf->get("sdl_x_size") );
     this->_size_y = std::stoi( conf->get("sdl_y_size") );
+    this->_tex_x = std::stoi( conf->get("matrix_x_size") );
+    this->_tex_y = std::stoi( conf->get("matrix_y_size") );
     this->_sdl_ok = false;
 
     if ( SDL_Init( SDL_INIT_VIDEO ) != 0 ) {
@@ -20,9 +22,10 @@ Sdl::Sdl( Config* conf ) {
         return;
     }
 
+    SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "nearest" );
     this->_texture = SDL_CreateTexture( this->_renderer, SDL_PIXELFORMAT_XBGR8888,
                                         SDL_TEXTUREACCESS_STREAMING,
-                                        this->_size_x, this->_size_y );
+                                        this->_tex_x, this->_tex_y );
     if ( !this->_texture ) {
         logger(3, ("SDL create texture: " + std::string(SDL_GetError())).c_str() );
         return;
@@ -53,16 +56,16 @@ bool Sdl::display( Image* img ) {
     if ( SDL_LockTexture( this->_texture, nullptr, &raw, &pitch ) != 0 )
         return false;
 
-    const float inv_x = 1.f / this->_size_x;
-    const float inv_y = 1.f / this->_size_y;
+    const float ux = img->weigthUnit();
+    const float uy = img->heigthUnit();
 
-    for ( int y = 0; y < this->_size_y; y++ ) {
+    for ( int y = 0; y < this->_tex_y; y++ ) {
 
         Uint32* row = reinterpret_cast<Uint32*>( static_cast<Uint8*>(raw) + y * pitch );
-        const float l = ( y + 0.5f ) * inv_y;
+        const float l = ( y + 0.5f ) * uy;
 
-        for ( int x = 0; x < this->_size_x; x++ )
-            row[x] = img->getPixelInView( ( x + 0.5f ) * inv_x, l );
+        for ( int x = 0; x < this->_tex_x; x++ )
+            row[x] = img->getPixelInView( ( x + 0.5f ) * ux, l );
     }
 
     SDL_UnlockTexture( this->_texture );
@@ -70,5 +73,4 @@ bool Sdl::display( Image* img ) {
     SDL_RenderPresent( this->_renderer );
 
     return true;
-
 }
