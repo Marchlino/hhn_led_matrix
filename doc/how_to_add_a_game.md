@@ -23,7 +23,7 @@ Things you might need:
 - `utils/geometry.hpp` contain fonction and structures to use vectors, rotate them and translate them from 3D space to 2D space. If you plan to use translate2D(), you will NEED to initialize a camera object with a Image and a angle to pre-calculate the focal length for x and y axis.
 - `utils/colors.hpp` contain a function to convert RGB code to uint32_t and a RGB type to abstract the uint32_t type.
 - `display/Image.hpp` represent the canva you will have to draw on, the class already has some base drawing function like drawRectangle, drawCircle, drawTriangle, etc. This in combination of geometry.cpp allow you to do simple 3D and 2D graphics. You can also drawText, but avoid drawGlyph.
-- `updatePlayer` give you a list of Values which number and type depend of the controller type. A slider will only give you 1 Value of type int, a D-pad 4, etc. You always have one more Value at the start of the list which is the command code. If you don't need it, ignore it.
+- `updatePlayer` give you a list of Values which number and type depend of the controller type. A slider will only give you 1 Value of type int, a D-pad 4, etc.
 
 ## Integrate the Game object in the program
 
