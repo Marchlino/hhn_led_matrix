@@ -92,7 +92,6 @@ jobs:
         cmake -S . -B build
         cd build
         make
-        exit 1
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v4
