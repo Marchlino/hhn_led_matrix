@@ -69,7 +69,7 @@ int main( int argc, char** argv ) {
     logger( 0, "-- LED Matrix loaded --" );
 
     using Clock = std::chrono::steady_clock;
-    constexpr auto frame_time = std::chrono::nanoseconds(1'000'000'000 / 20);
+    constexpr auto frame_time = std::chrono::nanoseconds(1'000'000'000 / 30);
 
     auto next_frame = Clock::now();
 

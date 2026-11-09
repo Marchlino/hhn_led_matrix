@@ -24,8 +24,8 @@ class MainMenu: public Game {
         std::vector<int> _voted_for;
         int _current_game;
         uint_fast32_t _iterations = 0;
-        // std::vector<Vec3*> _cube;
-        // Camera* _camera;
+        std::vector<Vec3*> _cube;
+        Camera* _camera;
         std::mutex _mutex;
 
         // Bumped whenever something the web clients display changes

@@ -10,22 +10,21 @@ MainMenu::MainMenu( std::vector<Game*> games ) {
 
     this->_current_game = -1;
     this->_games = games;
-    /*
     this->_cube = {
         new Vec3(0.5, 0.5, 0.5), new Vec3(0.5, 0.5, -0.5), new Vec3(0.5, -0.5, 0.5), new Vec3(0.5, -0.5, -0.5),
         new Vec3(-0.5, 0.5, 0.5), new Vec3(-0.5, 0.5, -0.5), new Vec3(-0.5, -0.5, 0.5), new Vec3(-0.5, -0.5, -0.5)
     };
 
     this->_camera = new Camera();
-    */
+
 }
 
 
 MainMenu::~MainMenu() {
 
-    //for ( Vec3* v: this->_cube )
-    //    delete v;
-    //delete this->_camera;
+    for ( Vec3* v: this->_cube )
+        delete v;
+    delete this->_camera;
 
 }
 
@@ -230,9 +229,9 @@ bool MainMenu::render( Image* img ) {
 
     std::lock_guard<std::mutex> lock( this->_mutex );
 
-    // if ( this->_iterations == 0 ) {
-    //     initCamera( img, this->_camera, 30 );
-    // }
+    if ( this->_iterations == 0 ) {
+        initCamera( img, this->_camera, 30 );
+    }
 
     img->clear();
     this->_iterations += 1;
@@ -242,10 +241,76 @@ bool MainMenu::render( Image* img ) {
 
     else {
 
-        float height = 1./this->_players.size();
+        img->setDrawingColor( rgb( 227, 181, 219 ) );
+        img->drawRect( 0., 0., 1., 1. );
+        img->setDrawingColor( rgb( 36, 31, 35 ) );
+        img->drawText( "F", 0.05, -0.1, 0.9, 0.9 );
+
+        std::string text = "^Animii^";
+        uint8_t ind = 0;
+
+        const int CYCLE_DURATION = 360;
+        const int PHASE_DURATION = 120;
+        int phase = (this->_iterations % CYCLE_DURATION) / PHASE_DURATION;
+        float phase_progress = (float)((this->_iterations % CYCLE_DURATION) % PHASE_DURATION) / PHASE_DURATION;
+
+        float letter_width = 0.08;
+        int num_letters = text.length();
+        float total_width = num_letters * letter_width;
+        float start_x_base = (1.0 - total_width) / 2.0;
+
+        for ( Vec3* v: this->_cube ) {
+
+            // Vertex relative to cube's local origin (0,0,0)
+            Vec3* local_vertex = v;
+
+            // Apply rotations in local space
+            rotationX( v, 2. );
+            rotationY( v, 5. );
+            rotationZ( v, 1. );
+
+            // Transform to world space
+            Vec3 world_vertex = Vec3(
+                local_vertex->x + 0,
+                local_vertex->y + 0,
+                local_vertex->z + 10
+            );
+
+            Vec2 p = translate2D( &world_vertex, this->_camera );
+
+            img->setDrawingColor( rgb( 173, 90, 178 ) );
+            img->drawCircle( p.x + 0.7, p.y + 0.2, 0.02 );
+
+            float start_x = start_x_base + ind * letter_width;
+            float start_y = 0.8;
+
+            float target_x = p.x + 0.7;
+            float target_y = p.y + 0.6;
+
+            float text_x = target_x;
+            float text_y = target_y;
+
+            if ( phase == 0 ) {
+                text_x = start_x + (target_x - start_x) * phase_progress;
+                text_y = start_y + (target_y - start_y) * phase_progress;
+            }
+            else if ( phase == 1 ) {
+                text_x = target_x;
+                text_y = target_y;
+            }
+            else if ( phase == 2 ) {
+                text_x = target_x + (start_x - target_x) * phase_progress;
+                text_y = target_y + (start_y - target_y) * phase_progress;
+            }
+
+            img->setDrawingColor( rgb( 66, 12, 53 ) );
+            img->drawText( std::string(1, text.at(ind)), text_x, text_y, 0.1, 0.1 );
+            ind++;
+        }
+
         for ( int i = 0; i < this->_players.size(); i++ ) {
 
-            img->drawText( this->_players[i]->getName(), 0., height * i, 1., height);
+            img->drawText(this->_players[i]->getName(), 0.1, 0.1 * i, 0.9, 0.1);
 
         }
 
