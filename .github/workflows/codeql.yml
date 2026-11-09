@@ -88,7 +88,7 @@ jobs:
       if: matrix.build-mode == 'manual'
       shell: bash
       run: |
-        apt install libsdl2-dev libfreetype-dev libasio-dev
+        sudo apt install libsdl2-dev libfreetype-dev libasio-dev
         cmake -S . -B build
         make
         exit 1
