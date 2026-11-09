@@ -90,6 +90,7 @@ jobs:
       run: |
         sudo apt install libsdl2-dev libfreetype-dev libasio-dev
         cmake -S . -B build
+        cd build
         make
         exit 1
 
