@@ -1,20 +1,23 @@
 #pragma once
 #include "Game.hpp"
+#include "../utils/geometry.hpp"
 
 class Pong: public Game {
 
 private:
 
-    std::vector<Player*> players;
-    std::vector<int> scores;
-    float player_angle;
-    float min_angle;
+    std::vector<Player*> _players;
+    std::vector<int> _scores;
+    std::vector<Vec2> _paddles;
+    Vec2 _ball;
+    Vec2 _ball_direction;
+    float _ball_radius;
 
-    int getPlayerIndex(Player* );
+    int _getPlayerIndex(Player* );
 
 public:
 
-    Pong() = default;
+    Pong();
     ~Pong() = default;
     bool addPlayer(Player* ) override;
     bool removePlayer(Player* )override;

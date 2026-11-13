@@ -7,6 +7,7 @@ typedef struct v2 {
 
     float x;
     float y;
+    v2() = default;
     v2(float x, float y) {
 
         this->x = x;
@@ -21,6 +22,7 @@ typedef struct v3 {
     float x;
     float y;
     float z;
+    v3() = default;
     v3(float x, float y, float z) {
 
         this->x = x;
@@ -38,6 +40,7 @@ typedef struct v4 {
     float y;
     float z;
     float d;
+    v4() = default;
     v4(float x, float y, float z, float d) {
 
         this->x = x;
@@ -111,3 +114,27 @@ void initCamera( Image* i, Camera* c, float fov );
  * @param Camera* The Camera object we view the 2D plan from.
  */
 Vec2 translate2D( Vec3* v, Camera* c );
+
+float distance(Vec2 a, Vec2 b);
+
+float distance(Vec3 a, Vec3 b);
+
+Vec2 mult(Vec2 a, Vec2 b);
+
+Vec3 mult(Vec3 a, Vec3 b);
+
+Vec2 mult(Vec2 a, float b);
+
+Vec3 mult(Vec3 a, float b);
+
+Vec2 add(Vec2 a, Vec2 b);
+
+Vec3 add(Vec3 a, Vec3 b);
+
+Vec2 add(Vec2 a, float b);
+
+Vec3 add(Vec3 a, float b);
+
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}

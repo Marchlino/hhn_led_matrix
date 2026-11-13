@@ -82,3 +82,73 @@ Vec2 translate2D( Vec3* v, Camera* c ) {
     return result;
 
 }
+
+
+float distance(Vec2 a, Vec2 b) {
+
+    return sqrtf( powf(a.x - b.x, 2) + powf(a.y - b.y, 2) );
+
+}
+
+
+float distance(Vec3 a, Vec3 b) {
+
+    return sqrtf( powf(a.x - b.x, 2) + powf(a.y - b.y, 2) + powf(a.z - b.z, 2) );
+
+}
+
+
+Vec2 mult(Vec2 a, Vec2 b) {
+
+    return Vec2( a.x * b.x, a.y * b.y );
+
+}
+
+
+Vec3 mult(Vec3 a, Vec3 b) {
+
+    return Vec3( a.x * b.x, a.y * b.y, a.z * b.z );
+
+}
+
+
+Vec2 mult(Vec2 a, float b) {
+
+    return Vec2( a.x * b, a.y * b );
+
+}
+
+
+Vec3 mult(Vec3 a, float b) {
+
+    return Vec3( a.x * b, a.y * b, a.z * b );
+
+}
+
+
+Vec2 add(Vec2 a, Vec2 b) {
+
+    return Vec2( a.x + b.x, a.y + b.y );
+
+}
+
+
+Vec3 add(Vec3 a, Vec3 b) {
+
+    return Vec3( a.x + b.x, a.y + b.y, a.z + b.z );
+
+}
+
+
+Vec2 add(Vec2 a, float b) {
+
+    return Vec2( a.x + b, a.y + b );
+
+}
+
+
+Vec3 add(Vec3 a, float b) {
+
+    return Vec3( a.x + b, a.y + b, a.z + b );
+
+}
