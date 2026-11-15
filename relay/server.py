@@ -14,17 +14,21 @@ async def handle_matrix(websocket):
     
     try:
         async for message in websocket:
-            # Matrix sends messages like "1,VIBRATE" (PlayerID, Command)
+            # Matrix sends messages like "1,PASS,5" (PlayerID, Relay Command, Request)
             if "," in message:
-                target_id, payload = message.split(",", 1)
-                
-                if target_id.upper() == "ALL":
-                    # Broadcast to everyone
-                    for p_ws in players.values():
-                        await p_ws.send(payload)
-                elif target_id.isdigit() and int(target_id) in players:
-                    # Send to a specific player
-                    await players[int(target_id)].send(payload)
+                parts = message.split(",", 2)
+                if len(parts) == 3:
+                    target_id, command, payload = parts
+                    
+                    # Only forward PASS commands to players
+                    if command == "PASS":
+                        if target_id.upper() == "ALL":
+                            # Broadcast to everyone
+                            for p_ws in players.values():
+                                await p_ws.send(payload)
+                        elif target_id.isdigit() and int(target_id) in players:
+                            # Send to a specific player
+                            await players[int(target_id)].send(payload)
     finally:
         matrix_connection = None
         print("LED Matrix disconnected.")
@@ -39,21 +43,24 @@ async def handle_player(websocket):
     print(f"Player {my_id} connected!")
 
     try:
+        # Notify matrix of a new connection
+        if matrix_connection:
+            await matrix_connection.send(f"{my_id},CONNECT,0")
+
         async for message in websocket:
-            # When player 1 sends "MOVE,UP", forward it to the Matrix as "1,MOVE,UP"
+            # Forward player requests using the PASS command
             if matrix_connection:
-                await matrix_connection.send(f"{my_id},{message}")
+                await matrix_connection.send(f"{my_id},PASS,{message}")
     finally:
         # Clean up when they leave
         players.pop(my_id, None)
+        # Notify matrix of disconnection
         if matrix_connection:
-            await matrix_connection.send(f"{my_id},DISCONNECTED")
+            await matrix_connection.send(f"{my_id},DISCONNECT,0")
         print(f"Player {my_id} disconnected.")
 
 async def middleman(websocket):
     """Routes the connection to the right place."""
-    # The Matrix connects to ws://localhost:8765/matrix
-    # Players connect to ws://localhost:8765/
     path = getattr(websocket, "request", None)
     route = path.path if path else getattr(websocket, "path", "/")
     
