@@ -205,7 +205,7 @@ Build the project.
 cmake -S . -B build
 make
 
-# Or with Ninja
+# Or with Ninja
 cmake -S . -B build -G Ninja
 ninja
 ```

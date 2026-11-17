@@ -135,6 +135,14 @@ Vec2 add(Vec2 a, float b);
 
 Vec3 add(Vec3 a, float b);
 
-template <typename T> int sgn(T val) {
+Vec2 diff(Vec2 a, Vec2 b);
+
+Vec3 diff(Vec3 a, Vec3 b);
+
+Vec2 diff(Vec2 a, float b);
+
+Vec3 diff(Vec3 a, float b);
+
+template <typename T> int sign(T val) {
     return (T(0) < val) - (val < T(0));
 }

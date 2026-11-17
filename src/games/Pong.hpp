@@ -2,18 +2,48 @@
 #include "Game.hpp"
 #include "../utils/geometry.hpp"
 
+
+typedef struct {
+
+    Player* p;
+    int score;
+    Vec2 border_1;
+    Vec2 border_2;
+    Vec2 paddle;
+    Vec2 normal;
+
+} Pong_player;
+
+
+typedef struct {
+
+    Vec2 position;
+    Vec2 direction;
+    float radius;
+    Pong_player* touched_by;
+
+} Pong_ball;
+
+
+typedef struct {
+
+    Vec2 position;
+    float radius;
+
+} Wave;
+
+
 class Pong: public Game {
 
 private:
 
-    std::vector<Player*> _players;
-    std::vector<int> _scores;
-    std::vector<Vec2> _paddles;
-    Vec2 _ball;
-    Vec2 _ball_direction;
-    float _ball_radius;
+    std::vector<Pong_player*> _players;
+    Pong_ball* _ball;
+    Wave _wave;
+
 
     int _getPlayerIndex(Player* );
+    bool _recalcPlayers();
 
 public:
 

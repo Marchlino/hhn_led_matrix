@@ -152,3 +152,31 @@ Vec3 add(Vec3 a, float b) {
     return Vec3( a.x + b, a.y + b, a.z + b );
 
 }
+
+
+Vec2 diff(Vec2 a, Vec2 b) {
+
+    return Vec2( a.x - b.x, a.y - b.y );
+
+}
+
+
+Vec3 diff(Vec3 a, Vec3 b) {
+
+    return Vec3( a.x - b.x, a.y - b.y, a.z - b.z );
+
+}
+
+
+Vec2 diff(Vec2 a, float b) {
+
+    return Vec2( a.x - b, a.y - b );
+
+}
+
+
+Vec3 diff(Vec3 a, float b) {
+
+    return Vec3( a.x - b, a.y - b, a.z - b );
+
+}
