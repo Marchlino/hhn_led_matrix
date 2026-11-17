@@ -46,7 +46,6 @@ bool MainMenu::addPlayer( Player* p ) {
 
     }
 
-    logger( 1, ( "Added player with ID: " + p->getID() ).c_str() );
     this->_state_version++;
 
     return true;
@@ -92,7 +91,6 @@ bool MainMenu::removePlayer( Player* p ) {
 
     }
 
-    logger( 1, ( "Removed player with ID: " + p->getID() ).c_str() );
     this->_state_version++;
 
     return true;
@@ -103,16 +101,6 @@ bool MainMenu::removePlayer( Player* p ) {
 bool MainMenu::updatePlayer( Player* p, std::vector<Value> v) {
 
     std::lock_guard<std::mutex> lock( this->_mutex );
-
-    std::string request = "[ ";
-    for ( const Value& l: v ) {
-        if ( l.number )
-            request += std::to_string( *l.number ) + ", ";
-        else if ( l.string )
-            request += "\"" + *l.string + "\", ";
-    }
-    request += " ]";
-    logger( 1, ( "Received request: " + request + " from player with ID: " + p->getID() ).c_str() );
 
     int player_index = _getPlayerIndex( p );
 

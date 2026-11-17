@@ -118,6 +118,12 @@ bool Pong::render(Image* img) {
 
     for ( Pong_player* player: this->_players ) {
 
+        if ( this->_ball->touched_by == player ) {
+            img->setDrawingColor(rgb(223, 20, 40));
+        } else {
+            img->setDrawingColor(rgb(255, 255, 255));
+        }
+
         Vec2 point = Vec2(
             (player->border_1.x - player->border_2.x) * 0.1,
             (player->border_1.y - player->border_2.y) * 0.1
@@ -134,11 +140,12 @@ bool Pong::render(Image* img) {
             player->paddle.x + point.x + (player->normal.x * 0.01), player->paddle.y + point.y + (player->normal.y * 0.01)
         );
 
+        img->setDrawingColor(rgb(128, 128, 128));
         std::string score = std::to_string(player->score);
-        img->drawText( score, player->paddle.x + player->normal.x * -1.1, player->paddle.y + player->normal.y * -1.1, 0.1 * score.size(), 0.1);
+        img->drawText( score, player->paddle.x + player->normal.x * -0.1, player->paddle.y + player->normal.y * -0.1, 0.05 * score.size(), 0.05);
 
     }
-
+    img->setDrawingColor(rgb(255, 255, 255));
     img->drawCircle(this->_ball->position.x, this->_ball->position.y, this->_ball->radius);
 
     if ( this->_wave.radius < 1 ) {
