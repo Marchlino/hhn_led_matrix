@@ -10,20 +10,27 @@ MainMenu::MainMenu( std::vector<Game*> games ) {
 
     this->_current_game = -1;
     this->_games = games;
-    this->_cube = {
-        new Vec3(0.5, 0.5, 0.5), new Vec3(0.5, 0.5, -0.5), new Vec3(0.5, -0.5, 0.5), new Vec3(0.5, -0.5, -0.5),
-        new Vec3(-0.5, 0.5, 0.5), new Vec3(-0.5, 0.5, -0.5), new Vec3(-0.5, -0.5, 0.5), new Vec3(-0.5, -0.5, -0.5)
-    };
 
     this->_camera = new Camera();
+
+    this->_spaceship = new MainMenu_Spaceship();
+    this->_spaceship->mesh = fast_obj_read("assets/MainMenu/spaceship.obj");
+    if (!this->_spaceship->mesh) {
+        logger(3, "Could not load assets/MainMenu/spaceship.obj");
+    }
+    this->_spaceship->position = Vec3(
+        6,
+        6,
+        8
+    );
+    this->_spaceship->rotation.z = 180;
 
 }
 
 
 MainMenu::~MainMenu() {
 
-    for ( Vec3* v: this->_cube )
-        delete v;
+    delete this->_spaceship;
     delete this->_camera;
 
 }
@@ -200,6 +207,96 @@ bool MainMenu::update() {
 
     if ( this->_current_game >= 0 )
         this->_games[this->_current_game]->update();
+    else {
+
+        this->_spaceship->rotation.y += 1.;
+
+        fastObjMesh* m   = _spaceship->mesh;
+        const Vec3   pos = _spaceship->position;
+        const Vec3   rot = _spaceship->rotation;
+
+        Vec3 ax(1, 0, 0), ay(0, 1, 0), az(0, 0, 1);
+        for (Vec3* v : { &ax, &ay, &az }) {
+            rotationX(v, rot.x);
+            rotationY(v, rot.y);
+            rotationZ(v, rot.z);
+        }
+
+        _screen.resize(m->position_count);
+        _world.resize(m->position_count);
+        for (unsigned i = 1; i < m->position_count; ++i) {
+            const float* p = m->positions + 3 * i;
+            Vec3 w(ax.x * p[0] + ay.x * p[1] + az.x * p[2] + pos.x,
+                   ax.y * p[0] + ay.y * p[1] + az.y * p[2] + pos.y,
+                   ax.z * p[0] + ay.z * p[1] + az.z * p[2] + pos.z);
+            _world[i]  = w;
+            _screen[i] = translate2D(&w, _camera);
+        }
+        _tris.clear();
+
+        unsigned base = 0;
+        for (unsigned f = 0; f < m->face_count; ++f) {
+            unsigned n = m->face_vertices[f];
+
+            uint8_t r = 255, g = 255, b = 255;
+            if (m->material_count > 0) {
+                unsigned mi = m->face_materials[f];
+                if (mi < m->material_count) {
+                    const fastObjMaterial& mat = m->materials[mi];
+                    r = (uint8_t)(mat.Kd[0] * 255.0f);
+                    g = (uint8_t)(mat.Kd[1] * 255.0f);
+                    b = (uint8_t)(mat.Kd[2] * 255.0f);
+                }
+            }
+
+
+            unsigned ia = m->indices[base].p;
+            for (unsigned k = 1; k + 1 < n; ++k) {
+                unsigned ib = m->indices[base + k].p;
+                unsigned ic = m->indices[base + k + 1].p;
+
+                const Vec2& sa = _screen[ia];
+                const Vec2& sb = _screen[ib];
+                const Vec2& sc = _screen[ic];
+
+                float area = (sb.x - sa.x) * (sc.y - sa.y) - (sb.y - sa.y) * (sc.x - sa.x);
+
+                if (area >= 0.0f) continue;
+
+                const Vec3& A = _world[ia];
+                const Vec3& B = _world[ib];
+                const Vec3& C = _world[ic];
+
+                float e1x = B.x - A.x, e1y = B.y - A.y, e1z = B.z - A.z;
+                float e2x = C.x - A.x, e2y = C.y - A.y, e2z = C.z - A.z;
+
+                float nx = e1y * e2z - e1z * e2y;
+                float ny = e1z * e2x - e1x * e2z;
+                float nz = e1x * e2y - e1y * e2x;
+                float len = std::sqrt(nx * nx + ny * ny + nz * nz);
+                if (len > 0.0f) { nx /= len; ny /= len; nz /= len; }
+
+                const float lx = 0.0f, ly = -1.0f, lz = 0.0f;
+                float diffuse = std::max(0.0f, nx * lx + ny * ly + nz * lz);
+                float light   = 0.4f + 0.8f * diffuse;
+
+                uint8_t R = (uint8_t)(r * light);
+                uint8_t G = (uint8_t)(g * light);
+                uint8_t B8 = (uint8_t)(b * light);
+
+                float cx = (A.x + B.x + C.x) / 3.0f;
+                float cy = (A.y + B.y + C.y) / 3.0f;
+                float cz = (A.z + B.z + C.z) / 3.0f;
+                float depth = cx * cx + cy * cy + cz * cz;
+
+                _tris.push_back({ depth, _screen[ia], _screen[ib], _screen[ic], R, G, B8 });
+            }
+            base += n;
+        }
+        std::sort(_tris.begin(), _tris.end(),
+                  [](const MainMenu_tri& x, const MainMenu_tri& y) { return x.depth > y.depth; });
+
+    }
 
     return true;
 
@@ -218,7 +315,7 @@ bool MainMenu::render( Image* img ) {
     std::lock_guard<std::mutex> lock( this->_mutex );
 
     if ( this->_iterations == 0 ) {
-        initCamera( img, this->_camera, 30 );
+        initCamera( img, this->_camera, 60 );
     }
 
     img->clear();
@@ -229,78 +326,20 @@ bool MainMenu::render( Image* img ) {
 
     else {
 
-        img->setDrawingColor( rgb( 227, 181, 219 ) );
-        img->drawRect( 0., 0., 1., 1. );
-        img->setDrawingColor( rgb( 36, 31, 35 ) );
-        img->drawText( "F", 0.05, -0.1, 0.9, 0.9 );
-
-        std::string text = "^Animii^";
-        uint8_t ind = 0;
-
-        const int CYCLE_DURATION = 360;
-        const int PHASE_DURATION = 120;
-        int phase = (this->_iterations % CYCLE_DURATION) / PHASE_DURATION;
-        float phase_progress = (float)((this->_iterations % CYCLE_DURATION) % PHASE_DURATION) / PHASE_DURATION;
-
-        float letter_width = 0.08;
-        int num_letters = text.length();
-        float total_width = num_letters * letter_width;
-        float start_x_base = (1.0 - total_width) / 2.0;
-
-        for ( Vec3* v: this->_cube ) {
-
-            // Vertex relative to cube's local origin (0,0,0)
-            Vec3* local_vertex = v;
-
-            // Apply rotations in local space
-            rotationX( v, 2. );
-            rotationY( v, 5. );
-            rotationZ( v, 1. );
-
-            // Transform to world space
-            Vec3 world_vertex = Vec3(
-                local_vertex->x + 0,
-                local_vertex->y + 0,
-                local_vertex->z + 10
-            );
-
-            Vec2 p = translate2D( &world_vertex, this->_camera );
-
-            img->setDrawingColor( rgb( 173, 90, 178 ) );
-            img->drawCircle( p.x + 0.7, p.y + 0.2, 0.02 );
-
-            float start_x = start_x_base + ind * letter_width;
-            float start_y = 0.8;
-
-            float target_x = p.x + 0.7;
-            float target_y = p.y + 0.6;
-
-            float text_x = target_x;
-            float text_y = target_y;
-
-            if ( phase == 0 ) {
-                text_x = start_x + (target_x - start_x) * phase_progress;
-                text_y = start_y + (target_y - start_y) * phase_progress;
-            }
-            else if ( phase == 1 ) {
-                text_x = target_x;
-                text_y = target_y;
-            }
-            else if ( phase == 2 ) {
-                text_x = target_x + (start_x - target_x) * phase_progress;
-                text_y = target_y + (start_y - target_y) * phase_progress;
-            }
-
-            img->setDrawingColor( rgb( 66, 12, 53 ) );
-            img->drawText( std::string(1, text.at(ind)), text_x, text_y, 0.1, 0.1 );
-            ind++;
+        for (const MainMenu_tri& t : _tris) {
+            img->setDrawingColor(rgb(t.r, t.g, t.b8));
+            img->drawTriangle(t.a.x, t.a.y, t.b.x, t.b.y, t.c.x, t.c.y);
         }
 
-        for ( int i = 0; i < this->_players.size(); i++ ) {
-
-            img->drawText(this->_players[i]->getName(), 0.1, 0.1 * i, 0.9, 0.1);
-
-        }
+        img->setDrawingColor(rgb(22, 54, 232));
+        img->drawText( "Heilbronn University", 0.01, 0.01, 0.98, 0.1 );
+        img->setDrawingColor(rgb(255, 255, 255));
+        img->drawText( "LED Matrix", 0.01, 0.11, 0.98, 0.1 );
+        std::string nb_players = std::to_string(this->_players.size());
+        img->setDrawingColor(rgb(219, 226, 26));
+        img->drawText( nb_players, 0.01, 0.55, 0.48, 0.4 );
+        img->setDrawingColor(rgb(255, 255, 255));
+        img->drawText( "players", 0.51, 0.80, 0.48, 0.1 );
 
     }
 

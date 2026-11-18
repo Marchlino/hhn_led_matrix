@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.23)
 
-project(LED_Matrix CXX)
+project(LED_Matrix C CXX)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -15,6 +15,7 @@ include_directories(LED_Matrix ${FREETYPE_INCLUDE_DIR_ft2build})
 
 add_definitions(-DLOG_LEVEL=0)
 add_definitions(-DWITH_GZFILEOP)
+add_definitions(-DFAST_OBJ_IMPLEMENTATION)
 
 add_executable( LED_Matrix )
 
@@ -32,12 +33,14 @@ target_sources( LED_Matrix
         src/network/Network.cpp
         src/network/Player.cpp
         include/logger/logger.cpp
+        include/fast_obj/fast_obj.c
 )
 
 target_include_directories( LED_Matrix
     PRIVATE
         include/logger
         include/crow
+        include/fast_obj
 )
 
 target_link_libraries( LED_Matrix ${SDL2_LIBRARIES} )

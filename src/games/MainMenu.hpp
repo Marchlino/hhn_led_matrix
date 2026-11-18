@@ -4,9 +4,25 @@
 #include <mutex>
 #include <string>
 #include <vector>
+#include "fast_obj.h"
 
 #include "Game.hpp"
 #include "../utils/geometry.hpp"
+
+
+typedef struct {
+
+    fastObjMesh* mesh;
+    Vec3 rotation;
+    Vec3 position;
+
+} MainMenu_Spaceship;
+
+typedef struct {
+    float   depth;
+    Vec2    a, b, c;
+    uint8_t r, g, b8;
+} MainMenu_tri;
 
 
 /**
@@ -24,9 +40,12 @@ class MainMenu: public Game {
         std::vector<int> _voted_for;
         int _current_game;
         uint_fast32_t _iterations = 0;
-        std::vector<Vec3*> _cube;
+        MainMenu_Spaceship* _spaceship;
         Camera* _camera;
         std::mutex _mutex;
+        std::vector<Vec2> _screen;
+        std::vector<Vec3> _world;
+        std::vector<MainMenu_tri> _tris;
 
         // Bumped whenever something the web clients display changes
         // (players, votes, current game), so Network knows when to resend.
