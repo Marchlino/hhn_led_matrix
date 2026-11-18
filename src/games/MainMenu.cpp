@@ -14,14 +14,14 @@ MainMenu::MainMenu( std::vector<Game*> games ) {
     this->_camera = new Camera();
 
     this->_spaceship = new MainMenu_Spaceship();
-    this->_spaceship->mesh = fast_obj_read("assets/MainMenu/spaceship.obj");
+    this->_spaceship->mesh = fast_obj_read("assets/MainMenu/hhn.obj");
     if (!this->_spaceship->mesh) {
-        logger(3, "Could not load assets/MainMenu/spaceship.obj");
+        logger(3, "Could not load assets/MainMenu/hhn.obj");
     }
     this->_spaceship->position = Vec3(
-        6,
-        6,
-        8
+        15,
+        15,
+        20
     );
     this->_spaceship->rotation.z = 180;
 
@@ -276,7 +276,7 @@ bool MainMenu::update() {
                 float len = std::sqrt(nx * nx + ny * ny + nz * nz);
                 if (len > 0.0f) { nx /= len; ny /= len; nz /= len; }
 
-                const float lx = 0.0f, ly = -1.0f, lz = 0.0f;
+                const float lx = 0.0f, ly = 0.0f, lz = -1.0f;
                 float diffuse = std::max(0.0f, nx * lx + ny * ly + nz * lz);
                 float light   = 0.4f + 0.8f * diffuse;
 
