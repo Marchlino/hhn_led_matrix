@@ -4,29 +4,6 @@
 
 The goal of the project is to use a LED display to display things.
 
-Currently we have:
-
-- A base project structure with:
-  - Some kind of rendering pipeline
-  - A game object
-  - A main menu to manage each games
-- What we need is:
-  1. **Add display driver for our LED display**
-  2. **Make an actual game and add it to the main menu. You SHOULD read that before doing anything -> [How to add a game ?](doc/how_to_add_a_game.md).**
-  - Add a relay mode and a relay to forward player requests from a distant server to our Pi
-  - *Multi-threaded draw calls ?? Basically anything to speed up the rendering process which is fairly slow as we run on 1 CPU core, calling the SDL renderer twice for each pixel might also be a big bottle-neck.*
-  - ~~Currently the program crash when we close it as we do not end the CrowCpp thread correctly when we close the main loop. I don't think there is a correct solution, but who knows ¯\_(ツ)_/¯.~~
-  - ~~Make the triangle primitive (https://gfxcourses.stanford.edu/cs248a/winter24content/media/drawing/02_drawtriangle.pdf) (needed if we're going to make the circular pong, could even be use for 3D)~~
-  - ~~It would be cool to have a Util folder with convenience functions/Macros like RGB() or HSL() to be able to write RGB/HSL color code in the program and directly convert them to uint8_t (or maybe uint16_t in the future)~~
-  - ~~Implement font rendering with the lib. [Schrift](https://tomolt.github.io/libschrift/v0.10.2.schrift.3.html) (in include)~~
-  -   ~~Implement network management/player management with a Network object and [CrowCpp](https://crowcpp.org/master/) (in include)~~
-- What we can do right now is:
-  - Start the Main menu
-  - Use the main menu to render something on the Image object
-  - Display the image object with a display driver
-  - Connect to the Crow server and get a HTML page
-  - Connect with websockets and exchange data
- 
 ```mermaid
 classDiagram
 class Game {
@@ -233,6 +210,8 @@ You should set the font_path with a valid ttf file to display fonts.
 
 CrowCpp look for static files and template files in `/static` and `/templates` folders, you should place the content of `/www` in `/build` or create a link for Crow to deliver the web pages.
 
+3D objects and assets for games should all be stored in `/assets` folder accessible from the current path. 
+
 ## Communication
 
 The UI and the server communicate via websocket using this format:
@@ -248,13 +227,3 @@ The UI and the server communicate via websocket using this format:
 ```
 0,[controller type]
 ```
-
-## Pong Game
-
-Pong is a simple tennis game, but we want a potentially infinite number of players. Our solution to fix this issue is the following (for 8 players here):
-
-<img width="1268" height="1192" alt="geogebra-export" src="https://github.com/user-attachments/assets/f57e2acf-36c1-499d-aa4c-a608a0720f71" /> (Made with Geogebra)
-
-The players would be place following the shape of a circle. To do so, we place N equidistant point for N players on the circle surface, the players as then allowed to move on the tangent of this circle at this point until the border of the screen or the first intersection with an other tangent.
-
-More simply, this shape can be summarized by a polygon, like an hexagon, where each segments are equal in length and angle.
