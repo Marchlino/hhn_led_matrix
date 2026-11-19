@@ -208,9 +208,7 @@ port=8080
 
 You should set the font_path with a valid ttf file to display fonts.
 
-CrowCpp look for static files and template files in `/static` and `/templates` folders, you should place the content of `/www` in `/build` or create a link for Crow to deliver the web pages.
-
-3D objects and assets for games should all be stored in `/assets` folder accessible from the current path. 
+All the statics files and front-end parts needed by the program are in the `/root` folder and must be in its starting path. Either copy its content to `build`, start the program from it or symlink it to `/build` for the program to run correctly in dev. mode.
 
 ## Communication
 
