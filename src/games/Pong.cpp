@@ -143,8 +143,8 @@ bool Pong::render(Image* img) {
         }
 
         Vec2 point = Vec2(
-            (player->border_1.x - player->border_2.x) * 0.5,
-            (player->border_1.y - player->border_2.y) * 0.5
+            (player->border_1.x - player->border_2.x) * 0.1,
+            (player->border_1.y - player->border_2.y) * 0.1
         );
 
         img->drawTriangle(
@@ -162,22 +162,6 @@ bool Pong::render(Image* img) {
         std::string score = std::to_string(player->score);
         img->drawText( score, player->paddle.x + player->normal.x * -0.1, player->paddle.y + player->normal.y * -0.1, 0.05 * score.size(), 0.05);
 
-        Vec2 half = Vec2(
-            (player->border_1.x - player->border_2.x) * 0.5,
-            (player->border_1.y - player->border_2.y) * 0.5
-        );
-        Vec2 upper_paddle  = Vec2( player->paddle.x - half.x, player->paddle.y - half.y );
-        Vec2 lower_paddle = Vec2( player->paddle.x + half.x, player->paddle.y + half.y );
-
-        Vec2 collision = intersect(
-            upper_paddle,
-            lower_paddle - upper_paddle,
-            this->_ball->position,
-            this->_ball->direction
-        );
-        img->setDrawingColor(rgb(255, 0, 0));
-        img->drawCircle(collision.x, collision.y, 0.01);
-        logger(0, ( std::to_string(collision.x) + ", " + std::to_string(collision.y) ).c_str());
     }
     img->setDrawingColor(rgb(255, 255, 255));
     img->drawCircle(this->_ball->position.x, this->_ball->position.y, this->_ball->radius);
@@ -225,8 +209,8 @@ bool Pong::update() {
     for ( Pong_player* player: this->_players ) {
 
         Vec2 half = Vec2(
-            (player->border_1.x - player->border_2.x) * 0.5,
-            (player->border_1.y - player->border_2.y) * 0.5
+            (player->border_1.x - player->border_2.x) * 0.1,
+            (player->border_1.y - player->border_2.y) * 0.1
         );
         Vec2 upper_paddle  = Vec2( player->paddle.x - half.x, player->paddle.y - half.y );
         Vec2 lower_paddle = Vec2( player->paddle.x + half.x, player->paddle.y + half.y );
@@ -238,16 +222,15 @@ bool Pong::update() {
             this->_ball->direction
         );
 
-        if ( distance(this->_ball->position, collision) > this->_ball->radius ) continue;
+        if ( distance( collision, player->paddle ) > 0.1 ) continue;
+        float side = (ball_next.x - collision.x) * player->normal.x + (ball_next.y - collision.y) * player->normal.y;
+        if ( distance(this->_ball->position, collision) > this->_ball->radius && side > 0 ) continue;
 
-        Vec2 normalized = player->normal / norm(player->normal);
-        float side = (ball_next.x - collision.x) * normalized.x + (ball_next.y - collision.y) * normalized.y;
-        if ( side < 0 ) {
-            normalized.x = -normalized.x;
-            normalized.y = -normalized.y;
-        }
-        Vec2 reflected = this->_ball->direction - 2  * dot( this->_ball->direction, normalized ) * normalized;
-        this->_ball->direction = reflected * 1.05;
+        Vec2 reflected = this->_ball->direction - 2  * dot( this->_ball->direction, player->normal ) * player->normal;
+        if ( norm(this->_ball->direction) < 0.002 )
+            this->_ball->direction = reflected * 1.05;
+        else
+             this->_ball->direction = reflected;
         this->_ball->touched_by = player;
         this->_ball->position = collision;
 
