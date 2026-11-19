@@ -3,54 +3,54 @@
 #include "../display/Image.hpp"
 
 
-typedef struct v2 {
+class Vec2 {
 
-    float x;
-    float y;
-    v2() = default;
-    v2(float x, float y) {
+    public :
 
-        this->x = x;
-        this->y = y;
+        float x, y;
 
-    }
+        Vec2() = default;
+        Vec2(float x, float y): x(x), y(y) {};
+        Vec2& operator+=(const Vec2 &t);
+        Vec2& operator-=(const Vec2 &t);
+        Vec2& operator*=(const Vec2 &t);
+        Vec2& operator/=(const Vec2 &t);
+        Vec2& operator+=(float t);
+        Vec2& operator-=(float t);
+        Vec2& operator*=(float t);
+        Vec2& operator/=(float t);
+        Vec2 operator+(const Vec2 &t) const;
+        Vec2 operator-(const Vec2 &t) const;
+        Vec2 operator*(const Vec2 &t) const;
+        Vec2 operator/(const Vec2 &t) const;
+        Vec2 operator+(float t) const;
+        Vec2 operator-(float t) const;
+        Vec2 operator*(float t) const;
+        Vec2 operator/(float t) const;
 
-} Vec2;
-
-
-typedef struct v3 {
-    float x;
-    float y;
-    float z;
-    v3() = default;
-    v3(float x, float y, float z) {
-
-        this->x = x;
-        this->y = y;
-        this->z = z;
-
-    }
-
-} Vec3;
+};
+Vec2 operator*(float a, Vec2 b);
 
 
-typedef struct v4 {
+class Vec3 {
 
-    float x;
-    float y;
-    float z;
-    float d;
-    v4() = default;
-    v4(float x, float y, float z, float d) {
+    public:
 
-        this->x = x;
-        this->y = y;
-        this->z = z;
-        this->d = d;
+        float x, y, z;
+        Vec3() {}
+        Vec3(float x, float y, float z): x(x), y(y), z(z) {}
+        Vec3& operator+=(const Vec3 &t);
+        Vec3& operator-=(const Vec3 &t);
+        Vec3& operator*=(float t);
+        Vec3& operator/=(float t);
+        Vec3 operator+(const Vec3 &t) const;
+        Vec3 operator-(const Vec3 &t) const;
+        Vec3 operator*(float t) const;
+        Vec3 operator/(float t) const;
 
-    }
+};
+Vec3 operator*(float a, Vec3 b);
 
-} Vec4;
 
 
 typedef struct {
@@ -115,34 +115,16 @@ void initCamera( Image* i, Camera* c, float fov );
  */
 Vec2 translate2D( Vec3* v, Camera* c );
 
+float dot(Vec2 a, Vec2 b);
+float dot(Vec3 a, Vec3 b);
+float norm(Vec2 a);
+double abs(Vec2 a);
+double proj(Vec2 a, Vec2 b);
+double angle(Vec2 a, Vec2 b);
+Vec3 cross(Vec3 a, Vec3 b);
+float triple(Vec3 a, Vec3 b, Vec3 c);
+float cross(Vec2 a, Vec2 b);
+Vec2 intersect(Vec2 a1, Vec2 d1, Vec2 a2, Vec2 d2);
+Vec3 intersect(Vec3 a1, Vec3 n1, Vec3 a2, Vec3 n2, Vec3 a3, Vec3 n3);
 float distance(Vec2 a, Vec2 b);
-
 float distance(Vec3 a, Vec3 b);
-
-Vec2 mult(Vec2 a, Vec2 b);
-
-Vec3 mult(Vec3 a, Vec3 b);
-
-Vec2 mult(Vec2 a, float b);
-
-Vec3 mult(Vec3 a, float b);
-
-Vec2 add(Vec2 a, Vec2 b);
-
-Vec3 add(Vec3 a, Vec3 b);
-
-Vec2 add(Vec2 a, float b);
-
-Vec3 add(Vec3 a, float b);
-
-Vec2 diff(Vec2 a, Vec2 b);
-
-Vec3 diff(Vec3 a, Vec3 b);
-
-Vec2 diff(Vec2 a, float b);
-
-Vec3 diff(Vec3 a, float b);
-
-template <typename T> int sign(T val) {
-    return (T(0) < val) - (val < T(0));
-}

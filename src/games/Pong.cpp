@@ -41,23 +41,43 @@ int Pong::_getPlayerIndex(Player* p) {
 
 bool Pong::_recalcPlayers() {
 
-    float share_step = 360. / this->_players.size();
-    for ( int i = 0; i < this->_players.size(); i++ ) {
+    if ( this->_players.size() >= 3 ) {
+        float share_step = 360. / this->_players.size();
+        for ( int i = 0; i < this->_players.size(); i++ ) {
 
-        float angle1 = share_step * i * (M_PI/180);
-        float angle2 = share_step * ( i + 1 ) * (M_PI/180);
+            float angle1 = share_step * i * (M_PI/180);
+            float angle2 = share_step * ( i + 1 ) * (M_PI/180);
 
-        Vec2 p1 = Vec2(0.1 + 0.4 * cos(angle1) + 0.4, 0.1 + 0.4 * sin(angle1) + 0.4);
-        Vec2 p2 = Vec2(0.1 + 0.4 * cos(angle2) + 0.4, 0.1 + 0.4 * sin(angle2) + 0.4);
-        Vec2 pmid = Vec2((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
+            Vec2 p1 = Vec2(0.1 + 0.4 * cos(angle1) + 0.4, 0.1 + 0.4 * sin(angle1) + 0.4);
+            Vec2 p2 = Vec2(0.1 + 0.4 * cos(angle2) + 0.4, 0.1 + 0.4 * sin(angle2) + 0.4);
+            Vec2 pmid = Vec2((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
 
-        this->_players[i]->border_1 = p1;
-        this->_players[i]->border_2 = p2;
-        this->_players[i]->paddle = pmid;
-        this->_players[i]->normal = mult( diff(pmid, .5), -1 );
-        float n_s = sqrt( pow( this->_players[i]->normal.x, 2 ) + pow( this->_players[i]->normal.y, 2 ) );
-        this->_players[i]->normal.x /= n_s;
-        this->_players[i]->normal.y /= n_s;
+            this->_players[i]->border_1 = p1;
+            this->_players[i]->border_2 = p2;
+            this->_players[i]->paddle = pmid;
+            this->_players[i]->normal = (pmid - .5) * -1;
+            float n_s = sqrt( pow( this->_players[i]->normal.x, 2 ) + pow( this->_players[i]->normal.y, 2 ) );
+            this->_players[i]->normal.x /= n_s;
+            this->_players[i]->normal.y /= n_s;
+
+        }
+    } else if ( this->_players.size() == 2 ) {
+
+        this->_players[0]->border_1 = Vec2(0.2, 0.);
+        this->_players[0]->border_2 = Vec2(0.2, 1.);
+        this->_players[0]->paddle = Vec2(0.2, 0.5);
+        this->_players[0]->normal = Vec2( 1.0, 0.0 );
+        this->_players[1]->border_1 = Vec2(0.8, 0.);
+        this->_players[1]->border_2 = Vec2(0.8, 1.);
+        this->_players[1]->paddle = Vec2(0.8, 0.5);
+        this->_players[1]->normal = Vec2( -1.0, 0.0 );
+
+    } else if ( this->_players.size() == 1 ) {
+
+        this->_players[0]->border_1 = Vec2(0.2, 0.);
+        this->_players[0]->border_2 = Vec2(0.2, 1.);
+        this->_players[0]->paddle = Vec2(0.1, 0.5);
+        this->_players[0]->normal = Vec2( 1.0, 0.0 );
 
     }
 
@@ -100,7 +120,7 @@ bool Pong::updatePlayer(Player* p, std::vector<Value> v) {
         v[0].number.value() * ( player->border_1.y - player->border_2.y ) / 256
     );
 
-    player->paddle = add( movement, player->border_2 );
+    player->paddle = movement + player->border_2;
 
     return true;
 
@@ -113,9 +133,7 @@ bool Pong::isRunning() {
 }
 
 bool Pong::render(Image* img) {
-
     img->setDrawingColor(rgb(255, 255, 255));
-
     for ( Pong_player* player: this->_players ) {
 
         if ( this->_ball->touched_by == player ) {
@@ -125,8 +143,8 @@ bool Pong::render(Image* img) {
         }
 
         Vec2 point = Vec2(
-            (player->border_1.x - player->border_2.x) * 0.1,
-            (player->border_1.y - player->border_2.y) * 0.1
+            (player->border_1.x - player->border_2.x) * 0.5,
+            (player->border_1.y - player->border_2.y) * 0.5
         );
 
         img->drawTriangle(
@@ -144,6 +162,22 @@ bool Pong::render(Image* img) {
         std::string score = std::to_string(player->score);
         img->drawText( score, player->paddle.x + player->normal.x * -0.1, player->paddle.y + player->normal.y * -0.1, 0.05 * score.size(), 0.05);
 
+        Vec2 half = Vec2(
+            (player->border_1.x - player->border_2.x) * 0.5,
+            (player->border_1.y - player->border_2.y) * 0.5
+        );
+        Vec2 upper_paddle  = Vec2( player->paddle.x - half.x, player->paddle.y - half.y );
+        Vec2 lower_paddle = Vec2( player->paddle.x + half.x, player->paddle.y + half.y );
+
+        Vec2 collision = intersect(
+            upper_paddle,
+            lower_paddle - upper_paddle,
+            this->_ball->position,
+            this->_ball->direction
+        );
+        img->setDrawingColor(rgb(255, 0, 0));
+        img->drawCircle(collision.x, collision.y, 0.01);
+        logger(0, ( std::to_string(collision.x) + ", " + std::to_string(collision.y) ).c_str());
     }
     img->setDrawingColor(rgb(255, 255, 255));
     img->drawCircle(this->_ball->position.x, this->_ball->position.y, this->_ball->radius);
@@ -186,56 +220,41 @@ bool Pong::update() {
 
     }
 
-    Vec2 ball_next = Vec2(
-        this->_ball->position.x + this->_ball->direction.x,
-        this->_ball->position.y + this->_ball->direction.y
-    );
+    Vec2 ball_next = this->_ball->position + ( this->_ball->direction );
 
     for ( Pong_player* player: this->_players ) {
 
         Vec2 half = Vec2(
-            (player->border_1.x - player->border_2.x) * 0.1,
-                         (player->border_1.y - player->border_2.y) * 0.1
+            (player->border_1.x - player->border_2.x) * 0.5,
+            (player->border_1.y - player->border_2.y) * 0.5
         );
-        Vec2 a  = Vec2( player->paddle.x - half.x, player->paddle.y - half.y );
-        Vec2 ab = Vec2( 2 * half.x, 2 * half.y );
+        Vec2 upper_paddle  = Vec2( player->paddle.x - half.x, player->paddle.y - half.y );
+        Vec2 lower_paddle = Vec2( player->paddle.x + half.x, player->paddle.y + half.y );
 
-        float len2 = ab.x * ab.x + ab.y * ab.y;
-        float t = ( (ball_next.x - a.x) * ab.x + (ball_next.y - a.y) * ab.y ) / len2;
-        t = std::max( 0.0f, std::min( 1.0f, t ) );
-        Vec2 closest = Vec2( a.x + t * ab.x, a.y + t * ab.y );
+        Vec2 collision = intersect(
+            upper_paddle,
+            lower_paddle - upper_paddle,
+            this->_ball->position,
+            this->_ball->direction
+        );
 
-        if ( distance( closest, ball_next ) >= this->_ball->radius )
-            continue;
+        if ( distance(this->_ball->position, collision) > this->_ball->radius ) continue;
 
-        float nlen = sqrt( player->normal.x * player->normal.x + player->normal.y * player->normal.y );
-        Vec2 n = Vec2( player->normal.x / nlen, player->normal.y / nlen );
-        float side = (ball_next.x - closest.x) * n.x + (ball_next.y - closest.y) * n.y;
+        Vec2 normalized = player->normal / norm(player->normal);
+        float side = (ball_next.x - collision.x) * normalized.x + (ball_next.y - collision.y) * normalized.y;
         if ( side < 0 ) {
-            n.x = -n.x;
-            n.y = -n.y;
+            normalized.x = -normalized.x;
+            normalized.y = -normalized.y;
         }
-
-        float dot = this->_ball->direction.x * n.x + this->_ball->direction.y * n.y;
-        if ( dot >= 0 )
-            continue;
-
-        Vec2 reflected = Vec2(
-            this->_ball->direction.x - 2 * dot * n.x,
-            this->_ball->direction.y - 2 * dot * n.y
-        );
-        this->_ball->direction = mult( reflected, 1.01 );
-
-        this->_ball->position = Vec2(
-            closest.x + n.x * this->_ball->radius,
-            closest.y + n.y * this->_ball->radius
-        );
+        Vec2 reflected = this->_ball->direction - 2  * dot( this->_ball->direction, normalized ) * normalized;
+        this->_ball->direction = reflected * 1.05;
         this->_ball->touched_by = player;
+        this->_ball->position = collision;
 
         break;
     }
 
-    this->_ball->position = add( this->_ball->position, this->_ball->direction );
+    this->_ball->position = this->_ball->position + this->_ball->direction;
 
     }
 

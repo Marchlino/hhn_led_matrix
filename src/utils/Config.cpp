@@ -9,7 +9,7 @@ int Config::parse( std::string path ) {
     if ( !config_file.is_open() ) {
 
         logger( 4, "Can't open config file" );
-        throw ;
+        return 1;
 
     }
 
