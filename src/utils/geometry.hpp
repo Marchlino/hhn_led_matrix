@@ -2,7 +2,10 @@
 
 #include "../display/Image.hpp"
 
-
+/**
+ * @class Vec2
+ * @brief Represent a 2D vector with basic operations.
+ */
 class Vec2 {
 
     public :
@@ -31,7 +34,10 @@ class Vec2 {
 };
 Vec2 operator*(float a, Vec2 b);
 
-
+/**
+ * @class Vec3
+ * @brief Represent a 2D vector with basic operations.
+ */
 class Vec3 {
 
     public:
@@ -52,7 +58,10 @@ class Vec3 {
 Vec3 operator*(float a, Vec3 b);
 
 
-
+/**
+ * @struct Camera
+ * @brief Save for each axis the focal point.
+ */
 typedef struct {
 
     float fov_angle_x;
@@ -115,16 +124,82 @@ void initCamera( Image* i, Camera* c, float fov );
  */
 Vec2 translate2D( Vec3* v, Camera* c );
 
+/**
+ * @fn dot
+ * @brief Dot product between a and b
+ * @param a First vector
+ * @param b Second vector
+ */
 float dot(Vec2 a, Vec2 b);
+
+/**
+ * @fn dot
+ * @brief Dot product between a and b
+ * @param a First vector
+ * @param b Second vector
+ */
 float dot(Vec3 a, Vec3 b);
+
+/**
+ * @fn norm
+ * @brief Norm of vector a
+ * @param a Vector
+ */
 float norm(Vec2 a);
+
+/**
+ * @fn abs
+ * @brief Absolute of vector
+ * @param a Vector
+ */
 double abs(Vec2 a);
-double proj(Vec2 a, Vec2 b);
+
+/**
+ * @fn angle
+ * @brief Angle of vector a and b
+ * @param a Vector
+ * @param b Vector
+ */
 double angle(Vec2 a, Vec2 b);
+
+/**
+ * @fn cross
+ * @brief Cross product of a and b
+ * @param a Vector
+ * @param b Vector
+ */
 Vec3 cross(Vec3 a, Vec3 b);
-float triple(Vec3 a, Vec3 b, Vec3 c);
+
+/**
+ * @fn cross
+ * @brief Cross product of a and b
+ * @param a Vector
+ * @param b Vector
+ */
 float cross(Vec2 a, Vec2 b);
+
+/**
+ * @fn intersect
+ * @brief Intersection of line (Point 1, Direction 1) and (Point 2, Direction 2)
+ * @param a1 Point of first line
+ * @param d1 Direction of first line
+ * @param a2 Point of second line
+ * @param d2 Direction of second line
+ */
 Vec2 intersect(Vec2 a1, Vec2 d1, Vec2 a2, Vec2 d2);
-Vec3 intersect(Vec3 a1, Vec3 n1, Vec3 a2, Vec3 n2, Vec3 a3, Vec3 n3);
+
+/**
+ * @fn distance
+ * @brief Distance between point a and point b
+ * @param a First point
+ * @param b Second point
+ */
 float distance(Vec2 a, Vec2 b);
+
+/**
+ * @fn distance
+ * @brief Distance between point a and point b
+ * @param a First point
+ * @param b Second point
+ */
 float distance(Vec3 a, Vec3 b);

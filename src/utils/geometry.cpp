@@ -199,9 +199,7 @@ float norm(Vec2 a) {
 double abs(Vec2 a) {
     return sqrt(norm(a));
 }
-double proj(Vec2 a, Vec2 b) {
-    return dot(a, b) / abs(b);
-}
+
 double angle(Vec2 a, Vec2 b) {
     return acos(dot(a, b) / abs(a) / abs(b));
 }
@@ -211,25 +209,13 @@ Vec3 cross(Vec3 a, Vec3 b) {
                    a.z * b.x - a.x * b.z,
                    a.x * b.y - a.y * b.x);
 }
-float triple(Vec3 a, Vec3 b, Vec3 c) {
-    return dot(a, cross(b, c));
-}
+
 float cross(Vec2 a, Vec2 b) {
     return a.x * b.y - a.y * b.x;
 }
 
 Vec2 intersect(Vec2 a1, Vec2 d1, Vec2 a2, Vec2 d2) {
     return a1 + cross(a2 - a1, d2) / cross(d1, d2) * d1;
-}
-
-Vec3 intersect(Vec3 a1, Vec3 n1, Vec3 a2, Vec3 n2, Vec3 a3, Vec3 n3) {
-    Vec3 x(n1.x, n2.x, n3.x);
-    Vec3 y(n1.y, n2.y, n3.y);
-    Vec3 z(n1.z, n2.z, n3.z);
-    Vec3 d(dot(a1, n1), dot(a2, n2), dot(a3, n3));
-    return Vec3(triple(d, y, z),
-                   triple(x, d, z),
-                   triple(x, y, d)) / triple(n1, n2, n3);
 }
 
 Vec2 operator*(float a, Vec2 b) {

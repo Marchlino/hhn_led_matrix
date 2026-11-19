@@ -9,7 +9,10 @@
 #include "Game.hpp"
 #include "../utils/geometry.hpp"
 
-
+/**
+ * @struct MainMenu_Spaceship
+ * @brief The main menu 3D object. Was originally a spaceship.
+ */
 typedef struct {
 
     fastObjMesh* mesh;
@@ -18,6 +21,10 @@ typedef struct {
 
 } MainMenu_Spaceship;
 
+/**
+ * @struct MainMenu_tri
+ * @brief Cache the calculated triangles from the mesh.
+ */
 typedef struct {
     float   depth;
     Vec2    a, b, c;

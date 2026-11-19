@@ -2,7 +2,10 @@
 #include "Game.hpp"
 #include "../utils/geometry.hpp"
 
-
+/**
+ * @struct Pong_player
+ * @brief Save player data and cache often needed values
+ */
 typedef struct {
 
     Player* p;
@@ -14,7 +17,10 @@ typedef struct {
 
 } Pong_player;
 
-
+/**
+ * @struct Pong_ball
+ * @brief Store ball values
+ */
 typedef struct {
 
     Vec2 position;
@@ -24,7 +30,10 @@ typedef struct {
 
 } Pong_ball;
 
-
+/**
+ * @struct Wave
+ * @brief Store the wave effect values
+ */
 typedef struct {
 
     Vec2 position;
@@ -32,7 +41,10 @@ typedef struct {
 
 } Wave;
 
-
+/**
+ * @class Pong
+ * @brief Circular variant of the classical Pong game.
+ */
 class Pong: public Game {
 
 private:
@@ -41,8 +53,12 @@ private:
     Pong_ball* _ball;
     Wave _wave;
 
-
     int _getPlayerIndex(Player* );
+
+    /**
+     * @fn _recalcPlayers
+     * @brief Recalculate player postion within the circle
+     */
     bool _recalcPlayers();
 
 public:

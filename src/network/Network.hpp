@@ -10,6 +10,10 @@
 #include "Player.hpp"
 
 
+/**
+ * @class reLogger
+ * @brief Replace CrowCpp logger.
+ */
 class reLogger : public crow::ILogHandler {
 
 public:
@@ -40,7 +44,10 @@ public:
 
 };
 
-
+/**
+ * @class Network
+ * @brief Abstract and manage CrowCpp interactions
+ */
 class Network {
 
     private:
@@ -55,7 +62,18 @@ class Network {
         uint32_t _sent_version = 0;
         int _next_player_number = 0;
 
+        /**
+         * @fn getPlayerIndexByConnection
+         * @brief Return the player index with a given connection
+         * @param c CrowCpp websocket pointer
+         */
         int getPlayerIndexByConnection( crow::websocket::connection* c );
+
+        /**
+         * @fn parseRequest
+         * @brief Parse a websocket request
+         * @param data CSV-formatted request.
+         */
         static std::vector<Value> parseRequest( const std::string& data );
 
         /**
@@ -68,8 +86,23 @@ class Network {
 
         Network( Config* conf, MainMenu* main );
         ~Network();
+
+        /**
+         * @fn init
+         * @brief Create all the route needed by the application
+         */
         bool init();
+
+        /**
+         * @fn run
+         * @brief Start CrowCpp in a detached thread
+         */
         bool run();
+
+        /**
+         * @fn stop
+         * @brief Stop CrowCpp
+         */
         bool stop();
 
         /**
