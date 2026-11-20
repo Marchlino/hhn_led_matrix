@@ -4,9 +4,9 @@
 #include <mutex>
 #include <string>
 #include <vector>
-#include "../utils/Object3D.hpp"
 
 #include "Game.hpp"
+#include "../utils/Object3D.hpp"
 #include "../utils/geometry.hpp"
 
 
@@ -26,6 +26,7 @@ class MainMenu: public Game {
         int _current_game;
         uint_fast32_t _iterations = 0;
         Object3D* _illustration;
+        Object3D_Mesh* _illustration_mesh;
         Camera* _camera;
         std::mutex _mutex;
 

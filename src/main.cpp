@@ -4,6 +4,7 @@
 #include "games/Game.hpp"
 #include "games/MainMenu.hpp"
 #include "games/Pong.hpp"
+#include "games/SpaceInvader.hpp"
 #include "display/Image.hpp"
 #include "display/Display.hpp"
 #include "display/drivers/Sdl.hpp"
@@ -34,7 +35,7 @@ int main( int argc, char** argv ) {
 
     logger( 0, "-- LED Matrix Start --" );
 
-    std::vector<Game*> games = { new Pong() };
+    std::vector<Game*> games = { new Pong(), new SpaceInvader() };
 
     logger( 0, "- Loaded games" );
 

@@ -1,8 +1,8 @@
-#include "MainMenu.hpp"
 #include "logger.h"
 #include <cstdint>
 #include <string>
 
+#include "MainMenu.hpp"
 #include "../network/Player.hpp"
 
 
@@ -13,7 +13,8 @@ MainMenu::MainMenu( std::vector<Game*> games ) {
 
     this->_camera = new Camera();
 
-    this->_illustration = new Object3D( "assets/MainMenu/hhn.obj" );
+    this->_illustration_mesh = new Object3D_Mesh( "assets/MainMenu/hhn.obj" );
+    this->_illustration = new Object3D( this->_illustration_mesh );
     this->_illustration->position = Vec3( 15, 15, 20 );
     this->_illustration->rotation.z = 180;
 
@@ -225,9 +226,9 @@ bool MainMenu::render( Image* img ) {
     if ( this->_iterations == 0 ) {
         initCamera( img, this->_camera, 60 );
     }
+    this->_iterations++;
 
     img->clear();
-    this->_iterations += 1;
 
     if ( this->_current_game >= 0 )
         this->_games[this->_current_game]->render( img );

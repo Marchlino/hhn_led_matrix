@@ -1,6 +1,5 @@
 #include <algorithm>
 #include <cmath>
-#include <string>
 #include "logger.h"
 
 #include "Object3D.hpp"
@@ -8,36 +7,15 @@
 
 
 Object3D::Object3D() = default;
-Object3D::Object3D( std::string path ) {
+Object3D::Object3D( Object3D_Mesh* mesh ) {
 
-    loadMesh( path );
-
-}
-
-Object3D::~Object3D() {
-
-        delete this->_mesh;
+    this->_mesh = mesh;
 
 }
-
-bool Object3D::loadMesh( std::string path ) {
-
-    this->_mesh = fast_obj_read(path.c_str());
-
-    if (!this->_mesh) {
-
-        logger(3, ("Could not load " + path).c_str());
-        return false;
-    }
-
-    return true;
-
-}
-
 
 bool Object3D::calculateTriangles( Camera* cam ) {
 
-    fastObjMesh* m   = this->_mesh;
+    fastObjMesh* m   = this->_mesh->data;
     const Vec3   pos = this->position;
     const Vec3   rot = this->rotation;
 

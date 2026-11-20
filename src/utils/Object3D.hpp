@@ -1,6 +1,8 @@
+#pragma once
 #include "geometry.hpp"
 #include "fast_obj.h"
 #include <string>
+#include "logger.h"
 
 #include "../display/Image.hpp"
 
@@ -15,6 +17,20 @@ typedef struct {
 } Object3D_Tri;
 
 /**
+ * @struct Object3D_Mesh
+ * @brief Mesh of a Object3D
+ */
+typedef struct Object3D_Mesh {
+  fastObjMesh* data;
+  Object3D_Mesh();
+  Object3D_Mesh( std::string path ) {
+        this->data = fast_obj_read( path.c_str() );
+        if ( !this->data )
+            logger( 3, ("Could not load .obj file " + path).c_str() );
+  }
+} Object3D_Mesh;
+
+/**
  * @class Object3D
  * @brief Represent and manage a 3D object in obj format
  */
@@ -25,7 +41,7 @@ class Object3D {
         std::vector<Vec2> _screen;
         std::vector<Vec3> _world;
         std::vector<Object3D_Tri> _tris;
-        fastObjMesh* _mesh;
+        Object3D_Mesh* _mesh;
 
     public:
 
@@ -33,14 +49,8 @@ class Object3D {
         Vec3 position;
 
         Object3D();
-        Object3D( std::string path );
-        ~Object3D();
-
-        /**
-         * @fn loadMesh
-         * @brief Load an .obj file from a given path
-         */
-        bool loadMesh( std::string path );
+        Object3D( Object3D_Mesh* mesh );
+        ~Object3D() = default;
 
         /**
          * @fn calculateTriangles

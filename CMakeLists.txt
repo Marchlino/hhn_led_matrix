@@ -24,6 +24,7 @@ target_sources( LED_Matrix
         src/main.cpp
         src/games/MainMenu.cpp
         src/games/Pong.cpp
+        src/games/SpaceInvader.cpp
         src/display/Image.cpp
         src/display/drivers/Stdout.cpp
         src/display/drivers/Sdl.cpp
