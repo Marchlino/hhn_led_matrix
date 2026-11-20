@@ -4,32 +4,10 @@
 #include <mutex>
 #include <string>
 #include <vector>
-#include "fast_obj.h"
+#include "../utils/Object3D.hpp"
 
 #include "Game.hpp"
 #include "../utils/geometry.hpp"
-
-/**
- * @struct MainMenu_Spaceship
- * @brief The main menu 3D object. Was originally a spaceship.
- */
-typedef struct {
-
-    fastObjMesh* mesh;
-    Vec3 rotation;
-    Vec3 position;
-
-} MainMenu_Spaceship;
-
-/**
- * @struct MainMenu_tri
- * @brief Cache the calculated triangles from the mesh.
- */
-typedef struct {
-    float   depth;
-    Vec2    a, b, c;
-    uint8_t r, g, b8;
-} MainMenu_tri;
 
 
 /**
@@ -47,12 +25,9 @@ class MainMenu: public Game {
         std::vector<int> _voted_for;
         int _current_game;
         uint_fast32_t _iterations = 0;
-        MainMenu_Spaceship* _spaceship;
+        Object3D* _illustration;
         Camera* _camera;
         std::mutex _mutex;
-        std::vector<Vec2> _screen;
-        std::vector<Vec3> _world;
-        std::vector<MainMenu_tri> _tris;
 
         // Bumped whenever something the web clients display changes
         // (players, votes, current game), so Network knows when to resend.

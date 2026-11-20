@@ -30,6 +30,7 @@ target_sources( LED_Matrix
         src/utils/geometry.cpp
         src/utils/colors.cpp
         src/utils/Config.cpp
+        src/utils/Object3D.cpp
         src/network/Network.cpp
         src/network/Player.cpp
         include/logger/logger.cpp
