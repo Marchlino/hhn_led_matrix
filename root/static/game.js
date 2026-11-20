@@ -44,14 +44,15 @@ function buildGameList() {
         li.onclick = function () { vote(i); };
         list.appendChild(li);
         loadImage(name, function (url) {
+            let div =  document.createElement("div");
             if (url) {
                 var img = document.createElement("img");
                 img.src = url;
                 img.alt = name;
-                li.prepend(img);
-            } else {
-                li.prepend(document.createTextNode(name));
+                div.style.backgroundImage = `url(${url})`;
             }
+            div.innerHTML = `<h2>${name}</h2>`;
+            li.prepend(div);
         });
     });
     drawTokens();

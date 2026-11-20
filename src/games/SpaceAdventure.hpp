@@ -6,24 +6,28 @@ typedef struct {
 
     Player* player;
     Object3D spaceship;
+    Vec2 direction;
+    Vec2 position;
+    Vec3 rotation;
 
-} SpaceInvader_Player;
+} SpaceAdventure_Player;
 
 
 typedef struct {
 
     Object3D obj;
     int life;
+    Vec2 position;
 
-} SpaceInvader_Asteroid;
+} SpaceAdventure_Asteroid;
 
 
-class SpaceInvader: public Game {
+class SpaceAdventure: public Game {
 
     private:
 
-        std::vector<SpaceInvader_Asteroid*> _asteroids;
-        std::vector<SpaceInvader_Player*> _players;
+        std::vector<SpaceAdventure_Asteroid*> _asteroids;
+        std::vector<SpaceAdventure_Player*> _players;
         std::vector<Vec2> _bullets;
         Object3D_Mesh* _asteroids_mesh;
         Object3D_Mesh* _player_mesh;
@@ -35,8 +39,8 @@ class SpaceInvader: public Game {
 
     public:
 
-        SpaceInvader();
-        ~SpaceInvader();
+        SpaceAdventure();
+        ~SpaceAdventure();
         bool addPlayer(Player* ) override;
         bool removePlayer(Player* )override;
         bool updatePlayer(Player* , std::vector<Value> ) override;

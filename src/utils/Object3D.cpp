@@ -36,7 +36,7 @@ bool Object3D::calculateTriangles( Camera* cam ) {
         _world[i]  = w;
         _screen[i] = translate2D(&w, cam);
     }
-    _tris.clear();
+    tris.clear();
 
     unsigned base = 0;
     for (unsigned f = 0; f < m->face_count; ++f) {
@@ -92,11 +92,11 @@ bool Object3D::calculateTriangles( Camera* cam ) {
             float cz = (A.z + B.z + C.z) / 3.0f;
             float depth = cx * cx + cy * cy + cz * cz;
 
-            _tris.push_back({ depth, _screen[ia], _screen[ib], _screen[ic], R, G, B8 });
+            tris.push_back({ depth, _screen[ia], _screen[ib], _screen[ic], R, G, B8 });
         }
         base += n;
     }
-    std::sort(_tris.begin(), _tris.end(),
+    std::sort(tris.begin(), tris.end(),
               [](const Object3D_Tri& x, const Object3D_Tri& y) { return x.depth > y.depth; });
 
     return true;
@@ -106,7 +106,7 @@ bool Object3D::calculateTriangles( Camera* cam ) {
 
 bool Object3D::display( Image* img ) {
 
-    for (const Object3D_Tri& t : _tris) {
+    for (const Object3D_Tri& t : tris) {
         img->setDrawingColor(rgb(t.r, t.g, t.b8));
         img->drawTriangle(t.a.x, t.a.y, t.b.x, t.b.y, t.c.x, t.c.y);
     }

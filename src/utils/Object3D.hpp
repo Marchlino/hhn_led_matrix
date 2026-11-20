@@ -40,13 +40,13 @@ class Object3D {
 
         std::vector<Vec2> _screen;
         std::vector<Vec3> _world;
-        std::vector<Object3D_Tri> _tris;
         Object3D_Mesh* _mesh;
 
     public:
 
         Vec3 rotation;
         Vec3 position;
+        std::vector<Object3D_Tri> tris;
 
         Object3D();
         Object3D( Object3D_Mesh* mesh );

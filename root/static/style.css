@@ -54,6 +54,9 @@ main {
     justify-content: center;
     font-size: 1.5em;
     overflow: hidden;
+    border-radius: 10px;
+    margin: 0px 10px 10px 10px;
+    box-shadow: 0px 0px 5px black;
 
 }
 
@@ -64,11 +67,13 @@ main {
 
 }
 
-#games img {
+#games div {
 
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: fit;
+    color: lightyellow;
+    text-align: center;
 
 }
 
